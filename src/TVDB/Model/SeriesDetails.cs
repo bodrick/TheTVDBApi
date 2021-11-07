@@ -1,311 +1,307 @@
-﻿// -----------------------------------------------------------------------
+// -----------------------------------------------------------------------
 // <copyright company="Christoph van der Fecht - VDsoft">
 // This code can be used in commercial, free and open source projects.
 // </copyright>
 // -----------------------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
+using System.Xml;
+
 namespace TVDB.Model
 {
-	using System;
-	using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.Xml;
+    /// <summary>
+    /// Contains all details for the requested series like Actors, Banners and all episodes of the series.
+    /// </summary>
+    public class SeriesDetails : IDisposable
+    {
+        /// <summary>
+        /// The Actors.
+        /// </summary>
+        private List<Actor> _actors;
 
-	/// <summary>
-	/// Contains all details for the requested series like Actors, Banners and all episodes of the series.
-	/// </summary>
-	public class SeriesDetails : IDisposable
-	{
-		/// <summary>
-		/// Xml document that contains all actors.
-		/// </summary>
-		private XmlDocument actorsDoc = null;
+        /// <summary>
+        /// Xml document that contains all actors.
+        /// </summary>
+        private XmlDocument _actorsDoc;
 
-		/// <summary>
-		/// Xml document that contains all banners.
-		/// </summary>
-		private XmlDocument bannersDoc = null;
+        /// <summary>
+        /// The Banners.
+        /// </summary>
+        private List<Banner> _banners;
 
-		/// <summary>
-		/// Xml document that contains all details of a series.
-		/// </summary>
-		private XmlDocument languageDoc = null;
+        /// <summary>
+        /// Xml document that contains all banners.
+        /// </summary>
+        private XmlDocument _bannersDoc;
 
-		/// <summary>
-		/// The Language.
-		/// </summary>
-		private string language = null;
+        /// <summary>
+        /// Path of the extracted files.
+        /// </summary>
+        private string _extractionPath;
 
-		/// <summary>
-		/// The Actors.
-		/// </summary>
-		private List<Actor> actors = null;
+        /// <summary>
+        /// The Language.
+        /// </summary>
+        private string _language;
 
-		/// <summary>
-		/// The Series.
-		/// </summary>
-		private Series series;
+        /// <summary>
+        /// Xml document that contains all details of a series.
+        /// </summary>
+        private XmlDocument _languageDoc;
 
-		/// <summary>
-		/// The Banners.
-		/// </summary>
-		private List<Banner> banners;
+        /// <summary>
+        /// The Series.
+        /// </summary>
+        private Series _series;
 
-		/// <summary>
-		/// Path of the extracted files.
-		/// </summary>
-		private string extractionPath = null;
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SeriesDetails"/> class.
+        /// </summary>
+        /// <param name="extractionPath">Path of the extracted files.</param>
+        /// <param name="language">Language of the series.</param>
+        /// <exception cref="System.IO.DirectoryNotFoundException">Occurs when the provided extraction path doesn't exists.</exception>
+        /// <exception cref="ArgumentNullException">Occurs when to provided language is null or empty.</exception>
+        public SeriesDetails(string extractionPath, string language)
+        {
+            var dirInfo = new System.IO.DirectoryInfo(extractionPath);
+            if (!dirInfo.Exists)
+            {
+                throw new System.IO.DirectoryNotFoundException($"The directory \"{dirInfo.FullName}\" could not be found.");
+            }
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="SeriesDetails"/> class.
-		/// </summary>
-		/// <param name="extractionPath">Path of the extracted files.</param>
-		/// <param name="language">Language of the series.</param>
-		/// <exception cref="System.IO.DirectoryNotFoundException">Occurs when the provided extraction path doesn't exists.</exception>
-		/// <exception cref="ArgumentNullException">Occurs when to provided language is null or empty.</exception>
-		public SeriesDetails(string extractionPath, string language)
-		{
-			System.IO.DirectoryInfo dirInfo = new System.IO.DirectoryInfo(extractionPath);
-			if (!dirInfo.Exists)
-			{
-				throw new System.IO.DirectoryNotFoundException(string.Format("The directory \"{0}\" could not be found.", dirInfo.FullName));
-			}
+            if (string.IsNullOrEmpty(language))
+            {
+                throw new ArgumentNullException(nameof(language), "Provided language must not be null or empty.");
+            }
 
-			if (string.IsNullOrEmpty(language))
-			{
-				throw new ArgumentNullException("language", "Provided language must not be null or empty.");
-			}
+            _extractionPath = extractionPath;
+            Language = language;
 
-			this.extractionPath = extractionPath;
-			this.Language = language;
-
-			// load actors xml.
-			this.actorsDoc = new XmlDocument();
-            this.actorsDoc.Load(System.IO.Path.Combine(this.extractionPath, "actors.xml"));
+            // load actors xml.
+            _actorsDoc = new XmlDocument();
+            _actorsDoc.Load(System.IO.Path.Combine(_extractionPath, "actors.xml"));
 
             // load banners xml.
-            this.bannersDoc = new XmlDocument();
-			this.bannersDoc.Load(System.IO.Path.Combine(this.extractionPath, "banners.xml"));
+            _bannersDoc = new XmlDocument();
+            _bannersDoc.Load(System.IO.Path.Combine(_extractionPath, "banners.xml"));
 
             // load series xml.
-            this.languageDoc = new XmlDocument();
-			this.languageDoc.Load(System.IO.Path.Combine(this.extractionPath, string.Format("{0}.xml", this.Language)));
-
+            _languageDoc = new XmlDocument();
+            _languageDoc.Load(System.IO.Path.Combine(_extractionPath, $"{Language}.xml"));
         }
 
-		/// <summary>
-		/// Gets or sets the Language property.
-		/// </summary>
-		public string Language
-		{
-			get
-			{
-				return this.language;
-			}
+        /// <summary>
+        /// Gets or sets the Actors property.
+        /// </summary>
+        public List<Actor> Actors
+        {
+            get
+            {
+                if (_actors == null)
+                {
+                    DeserializeActors();
+                }
 
-			private set
-			{
-				if (value == this.language)
-				{
-					return;
-				}
+                return _actors;
+            }
 
-				this.language = value;
-			}
-		}
+            private set
+            {
+                if (value == _actors)
+                {
+                    return;
+                }
 
-		/// <summary>
-		/// Gets or sets the Actors property.
-		/// </summary>
-		public List<Actor> Actors
-		{
-			get
-			{
-				if (this.actors == null)
-				{
-					this.DeserializeActors();
-				}
+                _actors = value;
+            }
+        }
 
-				return this.actors;
-			}
+        /// <summary>
+        /// Gets or sets the Banners property.
+        /// </summary>
+        public List<Banner> Banners
+        {
+            get
+            {
+                if (_banners == null)
+                {
+                    DeserializeBanners();
+                }
 
-			private set
-			{
-				if (value == this.actors)
-				{
-					return;
-				}
+                return _banners;
+            }
 
-				this.actors = value;
-			}
-		}
+            set
+            {
+                if (value == _banners)
+                {
+                    return;
+                }
 
-		/// <summary>
-		/// Gets or sets the Series property.
-		/// </summary>
-		public Series Series
-		{
-			get
-			{
-				if (this.series == null)
-				{
-					this.DeserializeSeries();
-				}
+                _banners = value;
+            }
+        }
 
-				return this.series;
-			}
+        /// <summary>
+        /// Gets or sets the Language property.
+        /// </summary>
+        public string Language
+        {
+            get => _language;
 
-			private set
-			{
-				if (value == this.series)
-				{
-					return;
-				}
+            private set
+            {
+                if (value == _language)
+                {
+                    return;
+                }
 
-				this.series = value;
-			}
-		}
+                _language = value;
+            }
+        }
 
-		/// <summary>
-		/// Gets or sets the Banners property.
-		/// </summary>
-		public List<Banner> Banners
-		{
-			get
-			{
-				if (this.banners == null)
-				{
-					this.DeserializeBanners();
-				}
+        /// <summary>
+        /// Gets or sets the Series property.
+        /// </summary>
+        public Series Series
+        {
+            get
+            {
+                if (_series == null)
+                {
+                    DeserializeSeries();
+                }
 
-				return this.banners;
-			}
+                return _series;
+            }
 
-			set
-			{
-				if (value == this.banners)
-				{
-					return;
-				}
+            private set
+            {
+                if (value == _series)
+                {
+                    return;
+                }
 
-				this.banners = value;
-			}
-		}
+                _series = value;
+            }
+        }
 
-		/// <summary>
-		/// Releases all resources of the class.
-		/// </summary>
-		public void Dispose()
-		{
-			this.language = null;
-			this.extractionPath = null;
+        /// <summary>
+        /// Releases all resources of the class.
+        /// </summary>
+        public void Dispose()
+        {
+            _language = null;
+            _extractionPath = null;
 
-			this.actorsDoc = null;
-			this.bannersDoc = null;
-			this.languageDoc = null;
+            _actorsDoc = null;
+            _bannersDoc = null;
+            _languageDoc = null;
 
-			if (this.Actors != null)
-			{
-				this.actors.Clear();
-				this.actors = null;
-			}
+            if (Actors != null)
+            {
+                _actors.Clear();
+                _actors = null;
+            }
 
-			if (this.Banners != null)
-			{
-				this.banners.Clear();
-				this.banners = null;
-			}
+            if (Banners != null)
+            {
+                _banners.Clear();
+                _banners = null;
+            }
 
-			if (this.Series != null)
-			{
-				this.series = null;
-			}
-		}
+            if (Series != null)
+            {
+                _series = null;
+            }
+        }
 
-		/// <summary>
-		/// Deserializes all actors of the series.
-		/// </summary>
-		private void DeserializeActors()
-		{
-			if (this.actorsDoc == null || this.actorsDoc.ChildNodes.Count == 0)
-			{
-				return;
-			}
+        /// <summary>
+        /// Deserializes all actors of the series.
+        /// </summary>
+        private void DeserializeActors()
+        {
+            if (_actorsDoc == null || _actorsDoc.ChildNodes.Count == 0)
+            {
+                return;
+            }
 
-			this.Actors = new List<Actor>();
-            XmlNode actorsNode = this.actorsDoc.ChildNodes[this.actorsDoc.ChildNodes.Count-1];
+            Actors = new List<Actor>();
+            var actorsNode = _actorsDoc.ChildNodes[_actorsDoc.ChildNodes.Count - 1];
 
-			foreach (XmlNode currentNode in actorsNode)
-			{
-				if (currentNode.Name.Equals("Actor", StringComparison.OrdinalIgnoreCase))
-				{
-					Actor deserializes = new Actor();
-					deserializes.Deserialize(currentNode);
+            foreach (XmlNode currentNode in actorsNode)
+            {
+                if (currentNode.Name.Equals("Actor", StringComparison.OrdinalIgnoreCase))
+                {
+                    var deserializes = new Actor();
+                    deserializes.Deserialize(currentNode);
 
-					this.Actors.Add(deserializes);
-				}
-			}
-		}
+                    Actors.Add(deserializes);
+                }
+            }
+        }
 
-		/// <summary>
-		/// Deserializes all banners of the series.
-		/// </summary>
-		private void DeserializeBanners()
-		{
-			if (this.bannersDoc == null || this.bannersDoc.ChildNodes.Count == 0)
-			{
-				return;
-			}
+        /// <summary>
+        /// Deserializes all banners of the series.
+        /// </summary>
+        private void DeserializeBanners()
+        {
+            if (_bannersDoc == null || _bannersDoc.ChildNodes.Count == 0)
+            {
+                return;
+            }
 
-			this.Banners = new List<Banner>();
-			XmlNode bannersNode = this.bannersDoc.ChildNodes[this.bannersDoc.ChildNodes.Count-1];
+            Banners = new List<Banner>();
+            var bannersNode = _bannersDoc.ChildNodes[_bannersDoc.ChildNodes.Count - 1];
 
-			foreach (XmlNode currentNode in bannersNode.ChildNodes)
-			{
-				if (currentNode.Name.Equals("Banner", StringComparison.OrdinalIgnoreCase))
-				{
-					Banner deserialized = new Banner();
-					deserialized.Deserialize(currentNode);
+            foreach (XmlNode currentNode in bannersNode.ChildNodes)
+            {
+                if (currentNode.Name.Equals("Banner", StringComparison.OrdinalIgnoreCase))
+                {
+                    var deserialized = new Banner();
+                    deserialized.Deserialize(currentNode);
 
-					this.Banners.Add(deserialized);
-				}
-			}
-		}
+                    Banners.Add(deserialized);
+                }
+            }
+        }
 
-		/// <summary>
-		/// Deserializes the series.
-		/// </summary>
-		private void DeserializeSeries()
-		{
-			if (this.languageDoc == null || this.languageDoc.ChildNodes.Count == 0)
-			{
-				return;
-			}
+        /// <summary>
+        /// Deserializes the series.
+        /// </summary>
+        private void DeserializeSeries()
+        {
+            if (_languageDoc == null || _languageDoc.ChildNodes.Count == 0)
+            {
+                return;
+            }
 
-			this.Series = new Series();
-			if (this.Actors != null && this.Actors.Count > 0)
-			{
-				this.Series.ActorCollection = new System.Collections.ObjectModel.ObservableCollection<Actor>(this.Actors);
-			}
+            Series = new Series();
+            if (Actors != null && Actors.Count > 0)
+            {
+                Series.ActorCollection = new System.Collections.ObjectModel.ObservableCollection<Actor>(Actors);
+            }
 
-			XmlNode dataNode = this.languageDoc.ChildNodes[this.languageDoc.ChildNodes.Count-1];
+            var dataNode = _languageDoc.ChildNodes[_languageDoc.ChildNodes.Count - 1];
 
-			foreach (XmlNode currentNode in dataNode.ChildNodes)
-			{
-				if (currentNode.Name.Equals("Episode", StringComparison.OrdinalIgnoreCase))
-				{
-					Episode deserialized = new Episode();
-					deserialized.Deserialize(currentNode);
+            foreach (XmlNode currentNode in dataNode.ChildNodes)
+            {
+                if (currentNode.Name.Equals("Episode", StringComparison.OrdinalIgnoreCase))
+                {
+                    var deserialized = new Episode();
+                    deserialized.Deserialize(currentNode);
 
-					this.Series.AddEpisode(deserialized);
-					continue;
-				}
-				else if (currentNode.Name.Equals("Series", StringComparison.OrdinalIgnoreCase))
-				{
-					this.Series.Deserialize(currentNode);
-					continue;
-				}
-			}
-		}
-	}
+                    Series.AddEpisode(deserialized);
+                    continue;
+                }
+
+                if (currentNode.Name.Equals("Series", StringComparison.OrdinalIgnoreCase))
+                {
+                    Series.Deserialize(currentNode);
+                    continue;
+                }
+            }
+        }
+    }
 }

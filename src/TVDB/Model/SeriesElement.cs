@@ -1,29 +1,34 @@
-﻿// -----------------------------------------------------------------------
+// -----------------------------------------------------------------------
 // <copyright company="Christoph van der Fecht - VDsoft">
 // This code can be used in commercial, free and open source projects.
 // </copyright>
 // -----------------------------------------------------------------------
 
+using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
 namespace TVDB.Model
 {
-    using System;
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
-
     /// <summary>
     /// Base for the elements of a series.
     /// </summary>
     public abstract class SeriesElement : INotifyPropertyChanged
     {
         /// <summary>
+        /// Name of the <see cref="FirstAired"/> property.
+        /// </summary>
+        private const string FirstAiredName = "FirstAired";
+
+        /// <summary>
         /// Name of the <see cref="Id"/> property.
         /// </summary>
         private const string IdName = "Id";
 
         /// <summary>
-        /// Name of the <see cref="Name"/> property.
+        /// Name of the <see cref="ImdbId"/> property.
         /// </summary>
-        private const string NameName = "Name";
+        private const string ImdbIdName = "IMDBId";
 
         /// <summary>
         /// Name of the <see cref="Language"/> property.
@@ -31,96 +36,104 @@ namespace TVDB.Model
         private const string LanguageName = "Language";
 
         /// <summary>
+        /// Name of the <see cref="Name"/> property.
+        /// </summary>
+        private const string NameName = "Name";
+
+        /// <summary>
         /// Name of the <see cref="Overview"/> property.
         /// </summary>
         private const string OverviewName = "Overview";
 
         /// <summary>
-        /// Name of the <see cref="FirstAired"/> property.
+        /// Date the series was first aired.
         /// </summary>
-        private const string FirstAiredName = "FirstAired";
-
-        /// <summary>
-        /// Name of the <see cref="IMDBId"/> property.
-        /// </summary>
-        private const string IMDBIdName = "IMDBId";
+        private DateTime _firstAired = DateTime.MinValue;
 
         /// <summary>
         /// Id of the element.
         /// </summary>
-        private int id = 0;
-
-        /// <summary>
-        /// Name of the element.
-        /// </summary>
-        private string name = null;
-
-        /// <summary>
-        /// Language of the element.
-        /// </summary>
-        private string language = null;
-
-        /// <summary>
-        /// The overview of the series.
-        /// </summary>
-        private string overview = null;
-
-        /// <summary>
-        /// Date the series was first aired.
-        /// </summary>
-        private DateTime firstAired = DateTime.MinValue;
+        private int _id;
 
         /// <summary>
         /// IMDB ID fo the series.
         /// </summary>
-        private string imdbId = null;
-        
+        private string _imdbId;
+
+        /// <summary>
+        /// Language of the element.
+        /// </summary>
+        private string _language;
+
+        /// <summary>
+        /// Name of the element.
+        /// </summary>
+        private string _name;
+
+        /// <summary>
+        /// The overview of the series.
+        /// </summary>
+        private string _overview;
+
         /// <summary>
         /// Occurs when a property changes its value.
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
-        /// Gets or sets the id of the element.
+        /// Gets or sets the date the series was first aired.
         /// </summary>
-        public int Id
+        public DateTime FirstAired
         {
-            get
-            {
-                return this.id;
-            }
+            get => _firstAired;
 
             set
             {
-                if (value == this.id)
+                if (value == _firstAired)
                 {
                     return;
                 }
 
-                this.id = value;
-                this.RaisePropertyChanged(IdName);
+                _firstAired = value;
+                RaisePropertyChanged(FirstAiredName);
             }
         }
 
         /// <summary>
-        /// Gets or sets the name of the element.
+        /// Gets or sets the id of the element.
         /// </summary>
-        public string Name
+        public int Id
         {
-            get
-            {
-                return this.name;
-            }
+            get => _id;
 
             set
             {
-                if (value == this.name)
+                if (value == _id)
                 {
                     return;
                 }
 
-                this.name = value;
-                this.RaisePropertyChanged(NameName);
+                _id = value;
+                RaisePropertyChanged(IdName);
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the IMDB ID fo the series.
+        /// </summary>
+        public string ImdbId
+        {
+            get => _imdbId;
+
+            set
+            {
+                if (value == _imdbId)
+                {
+                    return;
+                }
+
+                _imdbId = value;
+                RaisePropertyChanged(ImdbIdName);
             }
         }
 
@@ -129,20 +142,36 @@ namespace TVDB.Model
         /// </summary>
         public string Language
         {
-            get
-            {
-                return this.language;
-            }
+            get => _language;
 
             set
             {
-                if (value == this.language)
+                if (value == _language)
                 {
                     return;
                 }
 
-                this.language = value;
-                this.RaisePropertyChanged(LanguageName);
+                _language = value;
+                RaisePropertyChanged(LanguageName);
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the name of the element.
+        /// </summary>
+        public string Name
+        {
+            get => _name;
+
+            set
+            {
+                if (value == _name)
+                {
+                    return;
+                }
+
+                _name = value;
+                RaisePropertyChanged(NameName);
             }
         }
 
@@ -151,76 +180,17 @@ namespace TVDB.Model
         /// </summary>
         public string Overview
         {
-            get
-            {
-                return this.overview;
-            }
+            get => _overview;
 
             set
             {
-                if (value == this.overview)
+                if (value == _overview)
                 {
                     return;
                 }
 
-                this.overview = value;
-                this.RaisePropertyChanged(OverviewName);
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the date the series was first aired.
-        /// </summary>
-        public DateTime FirstAired
-        {
-            get
-            {
-                return this.firstAired;
-            }
-
-            set
-            {
-                if (value == this.firstAired)
-                {
-                    return;
-                }
-
-                this.firstAired = value;
-                this.RaisePropertyChanged(FirstAiredName);
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the IMDB ID fo the series.
-        /// </summary>
-        public string IMDBId
-        {
-            get
-            {
-                return this.imdbId;
-            }
-
-            set
-            {
-                if (value == this.imdbId)
-                {
-                    return;
-                }
-
-                this.imdbId = value;
-                this.RaisePropertyChanged(IMDBIdName);
-            }
-        }
-
-        /// <summary>
-        /// Raises the <see cref="PropertyChanged"/> event.
-        /// </summary>
-        /// <param name="propertyName">Name of the property that changed its value.</param>
-        protected void RaisePropertyChanged([CallerMemberName]string propertyName = "")
-        {
-            if (this.PropertyChanged != null)
-            {
-                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+                _overview = value;
+                RaisePropertyChanged(OverviewName);
             }
         }
 
@@ -229,14 +199,14 @@ namespace TVDB.Model
         /// </summary>
         /// <param name="text">Text to prepare.</param>
         /// <returns>Clean text.</returns>
-        protected string PrepareText(string text)
+        protected static string PrepareText(string text)
         {
             if (string.IsNullOrEmpty(text))
             {
                 return null;
             }
 
-            string result = string.Empty;
+            string result;
 
             if (text.Contains("|"))
             {
@@ -254,10 +224,16 @@ namespace TVDB.Model
 
             if (result.EndsWith(","))
             {
-                result = result.Remove(result.LastIndexOf(","), 1).Trim();
+                result = result.Remove(result.LastIndexOf(",", StringComparison.OrdinalIgnoreCase), 1).Trim();
             }
 
             return result;
         }
+
+        /// <summary>
+        /// Raises the <see cref="PropertyChanged"/> event.
+        /// </summary>
+        /// <param name="propertyName">Name of the property that changed its value.</param>
+        protected void RaisePropertyChanged([CallerMemberName] string propertyName = "") => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

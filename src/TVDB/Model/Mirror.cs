@@ -1,34 +1,23 @@
-﻿// -----------------------------------------------------------------------
+// -----------------------------------------------------------------------
 // <copyright company="Christoph van der Fecht - VDsoft">
 // This code can be used in commercial, free and open source projects.
 // </copyright>
 // -----------------------------------------------------------------------
 
+using System;
+using System.ComponentModel;
+
 namespace TVDB.Model
 {
-    using System;
-    using System.ComponentModel;
-
-
     /// <summary>
     /// A mirror to load the data.
     /// </summary>
     public class Mirror : INotifyPropertyChanged, Interfaces.IXmlSerializer, IComparable<Mirror>
     {
         /// <summary>
-        /// Name of the <see cref="Id"/> property.
-        /// </summary>
-        private const string IdName = "Id";
-
-        /// <summary>
         /// Name of the <see cref="Address"/> property.
         /// </summary>
         private const string AddressName = "Address";
-
-        /// <summary>
-        /// Name of the <see cref="ContainsXmlFile"/> property.
-        /// </summary>
-        private const string ContainsXmlFileName = "ContainsXmlFile";
 
         /// <summary>
         /// Name of the <see cref="ContainsBannerFile"/> property.
@@ -36,84 +25,85 @@ namespace TVDB.Model
         private const string ContainsBannerFileName = "ContainsBannerFile";
 
         /// <summary>
+        /// Name of the <see cref="ContainsXmlFile"/> property.
+        /// </summary>
+        private const string ContainsXmlFileName = "ContainsXmlFile";
+
+        /// <summary>
         /// Name of the <see cref="ContainsZipFile"/> property.
         /// </summary>
         private const string ContainsZipFileName = "ContainsZipFile";
 
         /// <summary>
-        /// Id of the mirror.
+        /// Name of the <see cref="Id"/> property.
         /// </summary>
-        private int id = 0;
+        private const string IdName = "Id";
 
         /// <summary>
         /// Address of the mirror.
         /// </summary>
-        private string address = null;
+        private string _address;
+
+        /// <summary>
+        /// Value indicating whether the mirror provides banner file.
+        /// </summary>
+        private bool _containsBannerFile;
 
         /// <summary>
         /// Value indicating whether the mirror provides xml files.
         /// </summary>
-        private bool containsXmlFile = false;
-
-        /// <summary>
-        /// Value indicating whether the mirror provieds banner file.
-        /// </summary>
-        private bool containsBannerFile = false;
+        private bool _containsXmlFile;
 
         /// <summary>
         /// Value indicating whether the mirror provides zip file.
         /// </summary>
-        private bool containsZipFile = false;
+        private bool _containsZipFile;
 
         /// <summary>
-        /// Initializes a enw isntance of the <see cref="Mirror"/> class.
+        /// Id of the mirror.
         /// </summary>
-        public Mirror()
-        {
-
-        }
+        private int _id;
 
         /// <summary>
-        /// Gets or sets the id of the mirror.
+        /// Occurs when a property changed its value.
         /// </summary>
-        public int Id
-        {
-            get
-            {
-                return this.id;
-            }
-
-            set
-            {
-                if (value == this.id)
-                {
-                    return;
-                }
-
-                this.id = value;
-                this.RaisePropertyChanged(IdName);
-            }
-        }
+        public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
         /// Gets or sets the address of the mirror.
         /// </summary>
         public string Address
         {
-            get
-            {
-                return this.address;
-            }
+            get => _address;
 
             set
             {
-                if (value == this.address)
+                if (value == _address)
                 {
                     return;
                 }
 
-                this.address = value;
-                this.RaisePropertyChanged(AddressName);
+                _address = value;
+                RaisePropertyChanged(AddressName);
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the mirror provides banner file.
+        /// </summary>
+        public bool ContainsBannerFile
+        {
+            get => _containsBannerFile;
+
+            set
+            {
+                if (value == _containsBannerFile)
+                {
+                    return;
+                }
+
+                _containsBannerFile = value;
+                RaisePropertyChanged(ContainsBannerFileName);
             }
         }
 
@@ -122,42 +112,17 @@ namespace TVDB.Model
         /// </summary>
         public bool ContainsXmlFile
         {
-            get
-            {
-                return this.containsXmlFile;
-            }
+            get => _containsXmlFile;
 
             set
             {
-                if (value == this.containsXmlFile)
+                if (value == _containsXmlFile)
                 {
                     return;
                 }
 
-                this.containsXmlFile = value;
-                this.RaisePropertyChanged(ContainsXmlFileName);
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether the mirror provieds banner file.
-        /// </summary>
-        public bool ContainsBannerFile
-        {
-            get
-            {
-                return this.containsBannerFile;
-            }
-
-            set
-            {
-                if (value == this.containsBannerFile)
-                {
-                    return;
-                }
-
-                this.containsBannerFile = value;
-                this.RaisePropertyChanged(ContainsBannerFileName);
+                _containsXmlFile = value;
+                RaisePropertyChanged(ContainsXmlFileName);
             }
         }
 
@@ -166,27 +131,65 @@ namespace TVDB.Model
         /// </summary>
         public bool ContainsZipFile
         {
-            get
-            {
-                return this.containsZipFile;
-            }
+            get => _containsZipFile;
 
             set
             {
-                if (value == this.containsZipFile)
+                if (value == _containsZipFile)
                 {
                     return;
                 }
 
-                this.containsZipFile = value;
-                this.RaisePropertyChanged(ContainsZipFileName);
+                _containsZipFile = value;
+                RaisePropertyChanged(ContainsZipFileName);
             }
         }
 
         /// <summary>
-        /// Occurs when a property changed its value.
+        /// Gets or sets the id of the mirror.
         /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
+        public int Id
+        {
+            get => _id;
+
+            set
+            {
+                if (value == _id)
+                {
+                    return;
+                }
+
+                _id = value;
+                RaisePropertyChanged(IdName);
+            }
+        }
+
+        /// <summary>
+        /// Compares the <see cref="Id"/> of the provided Mirror with this one.
+        /// </summary>
+        /// <param name="other">Mirror object to compare.</param>
+        /// <returns>
+        /// 0: Ids are equal.
+        /// -1: Provided id is smaller than this one.
+        /// 1: Provided id is greater than this one.
+        /// </returns>
+        public int CompareTo(Mirror other)
+        {
+            if (other.Id.Equals(Id))
+            {
+                return 0;
+            }
+
+            if (other.Id > Id)
+            {
+                return 1;
+            }
+            if (other.Id < Id)
+            {
+                return -1;
+            }
+            return 0;
+        }
 
         /// <summary>
         /// Deserializes the provided xml node.
@@ -206,7 +209,7 @@ namespace TVDB.Model
 		/// 		/// Xml document that contains all banners.
 		/// 		/// </summary>
 		/// 		private XmlDocument mirrorDoc = null;
-		/// 		
+		///
 		/// 		/// <summary>
 		/// 		/// Initializes a new instance of the DocuClass class.
 		/// 		/// </summary>
@@ -216,33 +219,33 @@ namespace TVDB.Model
 		/// 			this.mirrorDoc = new XmlDocument();
 		/// 			this.mirrorDoc.Load(System.IO.Path.Combine(this.extractionPath, "mirrors.xml"));
 		/// 		}
-		/// 		
+		///
 		/// 		/// <summary>
 		/// 		/// Deserializes all mirrors that are available.
 		/// 		/// </summary>
 		/// 		public List&#60;Mirror&#62; DeserializeMirrors()
 		/// 		{
 		/// 			List&#60;Mirror&#62; mirrors = new List&#60;Mirror&#62;();
-		/// 			
+		///
 		/// 			// load the xml docs second child.
 		/// 			XmlNode mirrorNode = this.mirrorDoc.ChildNodes[1];
-		/// 	
+		///
 		/// 			// deserialize all mirrors.
 		/// 			foreach (XmlNode currentNode in mirrorNode.ChildNodes)
 		/// 			{
 		/// 				Mirror deserialized = new Mirror();
 		/// 				deserialized.Deserialize(currentNode);
-		/// 
+		///
 		/// 				if (this.defaultMirror == null)
 		/// 				{
-		/// 					if (deserialized.ContainsBannerFile &#38;&#38; 
-		/// 						deserialized.ContainsXmlFile &#38;&#38; 
+		/// 					if (deserialized.ContainsBannerFile &#38;&#38;
+		/// 						deserialized.ContainsXmlFile &#38;&#38;
 		/// 						deserialized.ContainsZipFile)
 		/// 					{
 		/// 						this.defaultMirror = deserialized;
 		/// 					}
 		/// 				}
-		/// 
+		///
 		/// 				receivedMirrors.Add(deserialized);
 		/// 			}
 		/// 		}
@@ -254,74 +257,32 @@ namespace TVDB.Model
         {
             if (node == null)
             {
-                throw new ArgumentNullException("node", "Provided node must not be null.");
+                throw new ArgumentNullException(nameof(node), "Provided node must not be null.");
             }
 
             foreach (System.Xml.XmlNode currentNode in node.ChildNodes)
             {
                 if (currentNode.Name.Equals("id", StringComparison.OrdinalIgnoreCase))
                 {
-                    int result = 0;
-                    int.TryParse(currentNode.InnerText, out result);
-                    this.Id = result;
+                    int.TryParse(currentNode.InnerText, out var result);
+                    Id = result;
                     continue;
                 }
-                else if (currentNode.Name.Equals("mirrorpath", StringComparison.OrdinalIgnoreCase))
+
+                if (currentNode.Name.Equals("mirrorpath", StringComparison.OrdinalIgnoreCase))
                 {
                     if (!string.IsNullOrEmpty(currentNode.InnerText))
                     {
-                        this.Address = currentNode.InnerText; 
+                        Address = currentNode.InnerText;
                     }
                     continue;
                 }
-                else if (currentNode.Name.Equals("typemask", StringComparison.OrdinalIgnoreCase))
+                if (currentNode.Name.Equals("typemask", StringComparison.OrdinalIgnoreCase))
                 {
-                    int result = 0;
-                    int.TryParse(currentNode.InnerText, out result);
-                    this.ConvertTypeMask(result);
+                    int.TryParse(currentNode.InnerText, out var result);
+                    ConvertTypeMask(result);
                     continue;
                 }
-            }
-        }
-
-        /// <summary>
-        /// Compares the <see cref="Id"/> of the provided Mirror with this one.
-        /// </summary>
-        /// <param name="other">Mirror object to compare.</param>
-        /// <returns>
-        /// 0: Ids are euqal.
-        /// -1: Provided id is smaller than this one.
-        /// 1: Provided id is greater than this one.
-        /// </returns>
-        public int CompareTo(Mirror other)
-        {
-            if (other.Id.Equals(this.Id))
-            {
-                return 0;
-            }
-            else if (other.Id > this.Id)
-            {
-                return 1;
-            }
-            else if (other.Id < this.Id)
-            {
-                return -1;
-            }
-            else
-            {
-                return 0;
-            }
-        }
-
-        /// <summary>
-        /// Raises the <see cref="PropertyChanged"/> event.
-        /// </summary>
-        /// <param name="propertyName">Name fo the property which changed its value.</param>
-        private void RaisePropertyChanged(string propertyName)
-        {
-            if (this.PropertyChanged != null)
-            {
-                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
 
@@ -331,9 +292,15 @@ namespace TVDB.Model
         /// <param name="typemask">Typemask value to convert.</param>
         private void ConvertTypeMask(int typemask)
         {
-            this.ContainsXmlFile = ((typemask >> 0) & 1) == 1;
-            this.ContainsBannerFile = ((typemask >> 1) & 1) == 1;
-            this.ContainsZipFile = ((typemask >> 2) & 1) == 1;
+            ContainsXmlFile = ((typemask >> 0) & 1) == 1;
+            ContainsBannerFile = ((typemask >> 1) & 1) == 1;
+            ContainsZipFile = ((typemask >> 2) & 1) == 1;
         }
+
+        /// <summary>
+        /// Raises the <see cref="PropertyChanged"/> event.
+        /// </summary>
+        /// <param name="propertyName">Name fo the property which changed its value.</param>
+        private void RaisePropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

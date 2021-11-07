@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using TVDB.Model;
 using Xunit;
 
@@ -9,17 +9,26 @@ namespace TVDB.Test.Model
         #region deserialize test
 
         [Fact]
-        public void DeserializeTestSuccessfull()
+        public void DeserializeTestFailedNoNode()
         {
-            string xmlContent = 
-                "<?xml version=\"1.0\" encoding=\"UTF-8\" ?><Actors><Actor><id>79415</id><Image>actors/79415.jpg</Image><Name>Nathan Fillion</Name><Role>Richard Castle</Role><SortOrder>0</SortOrder></Actor></Actors>";
+            var target = new Actor();
+            var expected = new ArgumentNullException("node", "Provided node must not be null.");
+            var actual = Assert.Throws<ArgumentNullException>(() => target.Deserialize(null));
 
-            System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
+            Assert.Equal(expected.Message, actual.Message);
+        }
+
+        [Fact]
+        public void DeserializeTestSuccessful()
+        {
+            const string xmlContent = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?><Actors><Actor><id>79415</id><Image>actors/79415.jpg</Image><Name>Nathan Fillion</Name><Role>Richard Castle</Role><SortOrder>0</SortOrder></Actor></Actors>";
+
+            var doc = new System.Xml.XmlDocument();
             doc.LoadXml(xmlContent);
 
-            System.Xml.XmlNode actoresNode = doc.ChildNodes[1];
-            System.Xml.XmlNode actorNode = actoresNode.ChildNodes[0];
-            Actor target = new Actor();
+            var actorsNode = doc.ChildNodes[1];
+            var actorNode = actorsNode.ChildNodes[0];
+            var target = new Actor();
             target.Deserialize(actorNode);
 
             Assert.Equal(79415, target.Id);
@@ -29,17 +38,6 @@ namespace TVDB.Test.Model
             Assert.Equal(0, target.SortOrder);
         }
 
-		[Fact]
-        public void DeserializeTestFailedNoNode()
-        {
-            Actor target = new Actor();
-			ArgumentNullException expected = new ArgumentNullException("node", "Provided node must not be null.");
-			ArgumentNullException actual = Assert.Throws<ArgumentNullException>(() => target.Deserialize(null));
-
-			Assert.Equal(expected.Message, actual.Message);
-        }
-
-
-        #endregion
+        #endregion deserialize test
     }
 }

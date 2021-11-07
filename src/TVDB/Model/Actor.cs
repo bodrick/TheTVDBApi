@@ -1,15 +1,15 @@
-﻿// -----------------------------------------------------------------------
+// -----------------------------------------------------------------------
 // <copyright company="Christoph van der Fecht - VDsoft">
 // This code can be used in commercial, free and open source projects.
 // </copyright>
 // -----------------------------------------------------------------------
 
+using System;
+using System.ComponentModel;
+using System.Xml;
+
 namespace TVDB.Model
 {
-    using System;
-	using System.ComponentModel;
-	using System.Xml;
-
     /// <summary>
     /// An Actor.
     /// </summary>
@@ -43,35 +43,27 @@ namespace TVDB.Model
         /// <summary>
         /// Id of the actor.
         /// </summary>
-        private int id = 0;
+        private int _id;
 
         /// <summary>
         /// Path of the actors image.
         /// </summary>
-        private string imagePath = null;
+        private string _imagePath;
 
         /// <summary>
         /// Real name of the actor.
         /// </summary>
-        private string name = null;
+        private string _name;
 
         /// <summary>
         /// Role the actor is playing.
         /// </summary>
-        private string role = null;
+        private string _role;
 
         /// <summary>
         /// Number the actors are sorted.
         /// </summary>
-        private int sortOrder = 0;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Actor"/> class.
-        /// </summary>
-        public Actor()
-        {
-
-        }
+        private int _sortOrder;
 
         /// <summary>
         /// Occurs when a property changes its value.
@@ -83,20 +75,17 @@ namespace TVDB.Model
         /// </summary>
         public int Id
         {
-            get
-            {
-                return this.id;
-            }
+            get => _id;
 
             set
             {
-                if (value == this.id)
+                if (value == _id)
                 {
                     return;
                 }
 
-                this.id = value;
-                this.RaisePropertyChanged(IdName);
+                _id = value;
+                RaisePropertyChanged(IdName);
             }
         }
 
@@ -105,20 +94,17 @@ namespace TVDB.Model
         /// </summary>
         public string ImagePath
         {
-            get
-            {
-                return this.imagePath;
-            }
+            get => _imagePath;
 
             set
             {
-                if (value == this.imagePath)
+                if (value == _imagePath)
                 {
                     return;
                 }
 
-                this.imagePath = value;
-                this.RaisePropertyChanged(ImagePathName);
+                _imagePath = value;
+                RaisePropertyChanged(ImagePathName);
             }
         }
 
@@ -127,20 +113,17 @@ namespace TVDB.Model
         /// </summary>
         public string Name
         {
-            get
-            {
-                return this.name;
-            }
+            get => _name;
 
             set
             {
-                if (value == this.name)
+                if (value == _name)
                 {
                     return;
                 }
 
-                this.name = value;
-                this.RaisePropertyChanged(NameName);
+                _name = value;
+                RaisePropertyChanged(NameName);
             }
         }
 
@@ -149,20 +132,17 @@ namespace TVDB.Model
         /// </summary>
         public string Role
         {
-            get
-            {
-                return this.role;
-            }
+            get => _role;
 
             set
             {
-                if (value == this.role)
+                if (value == _role)
                 {
                     return;
                 }
 
-                this.role = value;
-                this.RaisePropertyChanged(RoleName);
+                _role = value;
+                RaisePropertyChanged(RoleName);
             }
         }
 
@@ -171,28 +151,45 @@ namespace TVDB.Model
         /// </summary>
         public int SortOrder
         {
-            get
-            {
-                return this.sortOrder;
-            }
+            get => _sortOrder;
 
             set
             {
-                if (value == this.sortOrder)
+                if (value == _sortOrder)
                 {
                     return;
                 }
 
-                this.sortOrder = value;
-                this.RaisePropertyChanged(SortOrderName);
+                _sortOrder = value;
+                RaisePropertyChanged(SortOrderName);
             }
+        }
+
+        /// <summary>
+        /// Compares the <see cref="SortOrder"/> property of the provided actor and this.
+        /// </summary>
+        /// <param name="other">Actor to compare.</param>
+        /// <returns>Sort indicator.</returns>
+        public int CompareTo(Actor other)
+        {
+            if (other.SortOrder < SortOrder)
+            {
+                return -1;
+            }
+
+            if (other.SortOrder > SortOrder)
+            {
+                return 1;
+            }
+
+            return 0;
         }
 
         /// <summary>
         /// Deserializes the provided xml node.
         /// </summary>
         /// <param name="node">Node to deserialize.</param>
-		/// <exception cref="ArgumentNullException">Occurs when the provided <see cref="System.Xml.XmlNode"/> is null.</exception>
+		/// <exception cref="ArgumentNullException">Occurs when the provided <see cref="XmlNode"/> is null.</exception>
 		/// <example> This example shows how to use the deserialize method.
 		/// <code>
 		/// namespace Docunamespace
@@ -206,7 +203,7 @@ namespace TVDB.Model
 		/// 		/// Xml document that contains all actors.
 		/// 		/// </summary>
 		/// 		private XmlDocument actorsDoc = null;
-		/// 		
+		///
 		/// 		/// <summary>
 		/// 		/// Initializes a new instance of the DocuClass class.
 		/// 		/// </summary>
@@ -216,17 +213,17 @@ namespace TVDB.Model
 		/// 			this.actorsDoc = new XmlDocument();
 		/// 			this.actorsDoc.Load(System.IO.Path.Combine(this.extractionPath, "actors.xml"));
 		/// 		}
-		/// 		
+		///
 		/// 		/// <summary>
 		/// 		/// Deserializes all actors of the series.
 		/// 		/// </summary>
 		/// 		public List&#60;Actor&#62; DeserializeActors()
 		/// 		{
 		/// 			List&#60;Actor&#62; actors = new List&#60;Actor&#62;();
-		/// 			
+		///
 		/// 			// load the xml docs second child.
 		/// 			XmlNode actorsNode = this.actorsDoc.ChildNodes[1];
-		/// 
+		///
 		/// 			// deserialize all actors.
 		/// 			foreach (XmlNode currentNode in actorsNode)
 		/// 			{
@@ -234,7 +231,7 @@ namespace TVDB.Model
 		/// 				{
 		/// 					Actor deserializes = new Actor();
 		/// 					deserializes.Deserialize(currentNode);
-		/// 
+		///
 		/// 					actors.Add(deserializes);
 		/// 				}
 		/// 			}
@@ -243,74 +240,54 @@ namespace TVDB.Model
 		/// }
 		/// </code>
 		/// </example>
-        public void Deserialize(System.Xml.XmlNode node)
+        public void Deserialize(XmlNode node)
         {
             if (node == null)
             {
-                throw new ArgumentNullException("node", "Provided node must not be null.");
+                throw new ArgumentNullException(nameof(node), "Provided node must not be null.");
             }
 
             foreach (XmlNode currentNode in node.ChildNodes)
             {
-                if (currentNode.Name.Equals("id"))
+                switch (currentNode.Name)
                 {
-                    int result = 0;
-                    int.TryParse(currentNode.InnerText, out result);
-                    this.Id = result;
-                    continue;
-                }
-                else if (currentNode.Name.Equals("Image"))
-                {
-                    if (!string.IsNullOrEmpty(currentNode.InnerText))
+                    case "id":
                     {
-                        this.ImagePath = currentNode.InnerText; 
+                        int.TryParse(currentNode.InnerText, out var result);
+                        Id = result;
+                        continue;
                     }
-                    continue;
-                }
-                else if (currentNode.Name.Equals("Name"))
-                {
-                    if (!string.IsNullOrEmpty(currentNode.InnerText))
+                    case "Image":
                     {
-                        this.Name = currentNode.InnerText; 
+                        if (!string.IsNullOrEmpty(currentNode.InnerText))
+                        {
+                            ImagePath = currentNode.InnerText;
+                        }
+                        continue;
                     }
-                    continue;
-                }
-                else if (currentNode.Name.Equals("Role"))
-                {
-                    if (!string.IsNullOrEmpty(currentNode.InnerText))
+                    case "Name":
                     {
-                        this.Role = currentNode.InnerText; 
+                        if (!string.IsNullOrEmpty(currentNode.InnerText))
+                        {
+                            Name = currentNode.InnerText;
+                        }
+                        continue;
                     }
-                    continue;
+                    case "Role":
+                    {
+                        if (!string.IsNullOrEmpty(currentNode.InnerText))
+                        {
+                            Role = currentNode.InnerText;
+                        }
+                        continue;
+                    }
+                    case "SortOrder":
+                    {
+                        int.TryParse(currentNode.InnerText, out var result);
+                        SortOrder = result;
+                        continue;
+                    }
                 }
-                else if (currentNode.Name.Equals("SortOrder"))
-                {
-                    int result = 0;
-                    int.TryParse(currentNode.InnerText, out result);
-                    this.SortOrder = result;
-                    continue;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Compares the <see cref="SortOrder"/> property of the provided actor and this.
-        /// </summary>
-        /// <param name="other">Actor to compare.</param>
-        /// <returns>Sort indicator.</returns>
-        public int CompareTo(Actor other)
-        {
-            if (other.SortOrder < this.SortOrder)
-            {
-                return -1;
-            }
-            else if (other.SortOrder > this.SortOrder)
-            {
-                return 1;
-            }
-            else
-            {
-                return 0;
             }
         }
 
@@ -318,12 +295,6 @@ namespace TVDB.Model
         /// Raises the <see cref="PropertyChanged"/> event.
         /// </summary>
         /// <param name="propertyName">Name of the property that changed its value.</param>
-        private void RaisePropertyChanged(string propertyName)
-        {
-            if (this.PropertyChanged != null)
-            {
-                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
+        private void RaisePropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

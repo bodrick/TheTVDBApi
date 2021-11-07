@@ -1,13 +1,13 @@
-﻿// -----------------------------------------------------------------------
+// -----------------------------------------------------------------------
 // <copyright company="Christoph van der Fecht - VDsoft">
 // This code can be used in commercial, free and open source projects.
 // </copyright>
 // -----------------------------------------------------------------------
 
+using System.Xml;
+
 namespace TVDB.Interfaces
 {
-    using System.Xml;
-
     /// <summary>
     /// Deserializes an object from the received XML.
     /// </summary>
