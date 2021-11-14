@@ -1,11 +1,7 @@
-// -----------------------------------------------------------------------
-// <copyright company="Christoph van der Fecht - VDsoft">
-// This code can be used in commercial, free and open source projects.
-// </copyright>
-// -----------------------------------------------------------------------
-
 using System;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using JetBrains.Annotations;
 
 namespace TVDB.Model
 {
@@ -14,31 +10,6 @@ namespace TVDB.Model
     /// </summary>
     public class Mirror : INotifyPropertyChanged, Interfaces.IXmlSerializer, IComparable<Mirror>
     {
-        /// <summary>
-        /// Name of the <see cref="Address"/> property.
-        /// </summary>
-        private const string AddressName = "Address";
-
-        /// <summary>
-        /// Name of the <see cref="ContainsBannerFile"/> property.
-        /// </summary>
-        private const string ContainsBannerFileName = "ContainsBannerFile";
-
-        /// <summary>
-        /// Name of the <see cref="ContainsXmlFile"/> property.
-        /// </summary>
-        private const string ContainsXmlFileName = "ContainsXmlFile";
-
-        /// <summary>
-        /// Name of the <see cref="ContainsZipFile"/> property.
-        /// </summary>
-        private const string ContainsZipFileName = "ContainsZipFile";
-
-        /// <summary>
-        /// Name of the <see cref="Id"/> property.
-        /// </summary>
-        private const string IdName = "Id";
-
         /// <summary>
         /// Address of the mirror.
         /// </summary>
@@ -78,13 +49,13 @@ namespace TVDB.Model
 
             set
             {
-                if (value == _address)
+                if (string.Equals(value, _address, StringComparison.OrdinalIgnoreCase))
                 {
                     return;
                 }
 
                 _address = value;
-                RaisePropertyChanged(AddressName);
+                OnPropertyChanged();
             }
         }
 
@@ -103,7 +74,7 @@ namespace TVDB.Model
                 }
 
                 _containsBannerFile = value;
-                RaisePropertyChanged(ContainsBannerFileName);
+                OnPropertyChanged();
             }
         }
 
@@ -122,7 +93,7 @@ namespace TVDB.Model
                 }
 
                 _containsXmlFile = value;
-                RaisePropertyChanged(ContainsXmlFileName);
+                OnPropertyChanged();
             }
         }
 
@@ -141,7 +112,7 @@ namespace TVDB.Model
                 }
 
                 _containsZipFile = value;
-                RaisePropertyChanged(ContainsZipFileName);
+                OnPropertyChanged();
             }
         }
 
@@ -160,7 +131,7 @@ namespace TVDB.Model
                 }
 
                 _id = value;
-                RaisePropertyChanged(IdName);
+                OnPropertyChanged();
             }
         }
 
@@ -173,8 +144,14 @@ namespace TVDB.Model
         /// -1: Provided id is smaller than this one.
         /// 1: Provided id is greater than this one.
         /// </returns>
-        public int CompareTo(Mirror other)
+        /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
+        public int CompareTo([NotNull] Mirror other)
         {
+            if (other == null)
+            {
+                throw new ArgumentNullException(nameof(other));
+            }
+
             if (other.Id.Equals(Id))
             {
                 return 0;
@@ -262,45 +239,34 @@ namespace TVDB.Model
 
             foreach (System.Xml.XmlNode currentNode in node.ChildNodes)
             {
-                if (currentNode.Name.Equals("id", StringComparison.OrdinalIgnoreCase))
+                if (currentNode.Name.Equals("id", StringComparison.OrdinalIgnoreCase) && int.TryParse(currentNode.InnerText, out var id))
                 {
-                    int.TryParse(currentNode.InnerText, out var result);
-                    Id = result;
-                    continue;
+                    Id = id;
                 }
-
-                if (currentNode.Name.Equals("mirrorpath", StringComparison.OrdinalIgnoreCase))
+                else if (currentNode.Name.Equals("mirrorpath", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrEmpty(currentNode.InnerText))
                 {
-                    if (!string.IsNullOrEmpty(currentNode.InnerText))
-                    {
-                        Address = currentNode.InnerText;
-                    }
-                    continue;
+                    Address = currentNode.InnerText;
                 }
-                if (currentNode.Name.Equals("typemask", StringComparison.OrdinalIgnoreCase))
+                else if (currentNode.Name.Equals("typemask", StringComparison.OrdinalIgnoreCase) && int.TryParse(currentNode.InnerText, out var typeMask))
                 {
-                    int.TryParse(currentNode.InnerText, out var result);
-                    ConvertTypeMask(result);
-                    continue;
+                    ConvertTypeMask(typeMask);
                 }
             }
         }
 
-        /// <summary>
-        /// Converts the provided typemask into the bool values.
-        /// </summary>
-        /// <param name="typemask">Typemask value to convert.</param>
-        private void ConvertTypeMask(int typemask)
-        {
-            ContainsXmlFile = ((typemask >> 0) & 1) == 1;
-            ContainsBannerFile = ((typemask >> 1) & 1) == 1;
-            ContainsZipFile = ((typemask >> 2) & 1) == 1;
-        }
+        // Create the OnPropertyChanged method to raise the event
+        // The calling member's name will be used as the parameter.
+        protected void OnPropertyChanged([CallerMemberName] string name = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
         /// <summary>
-        /// Raises the <see cref="PropertyChanged"/> event.
+        /// Converts the provided typeMask into the bool values.
         /// </summary>
-        /// <param name="propertyName">Name fo the property which changed its value.</param>
-        private void RaisePropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        /// <param name="typeMask">typeMask value to convert.</param>
+        private void ConvertTypeMask(int typeMask)
+        {
+            ContainsXmlFile = ((typeMask >> 0) & 1) == 1;
+            ContainsBannerFile = ((typeMask >> 1) & 1) == 1;
+            ContainsZipFile = ((typeMask >> 2) & 1) == 1;
+        }
     }
 }

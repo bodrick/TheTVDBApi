@@ -1,9 +1,3 @@
-// -----------------------------------------------------------------------
-// <copyright company="Christoph van der Fecht - VDsoft">
-// This code can be used in commercial, free and open source projects.
-// </copyright>
-// -----------------------------------------------------------------------
-
 using System;
 using System.Collections.ObjectModel;
 using System.Xml;
@@ -15,121 +9,6 @@ namespace TVDB.Model
     /// </summary>
     public class Series : SeriesElement, Interfaces.IXmlSerializer
     {
-        /// <summary>
-        /// Name of the <see cref="ActorCollection"/> property.
-        /// </summary>
-        private const string ActorCollectionName = "ActorCollection";
-
-        /// <summary>
-        /// Name of the <see cref="Actors"/> property.
-        /// </summary>
-        private const string ActorsName = "Actors";
-
-        /// <summary>
-        /// Name of the <see cref="AddedByUserId"/> property.
-        /// </summary>
-        private const string AddedByUserIdName = "AddedByUserId";
-
-        /// <summary>
-        /// Name of the <see cref="AddedDate"/> property.
-        /// </summary>
-        private const string AddedDateName = "AddedDate";
-
-        /// <summary>
-        /// Name of the <see cref="AirsDayOfWeek"/> property.
-        /// </summary>
-        private const string AirsDayOfWeekName = "AirsDayOfWeek";
-
-        /// <summary>
-        /// Name of the <see cref="AirsTime"/> property.
-        /// </summary>
-        private const string AirsTimeName = "AirsTime";
-
-        /// <summary>
-        /// Name of the <see cref="Banner"/> property.
-        /// </summary>
-        private const string BannerName = "Banner";
-
-        /// <summary>
-        /// Name of the <see cref="ContentRating"/> property.
-        /// </summary>
-        private const string ContentRatingName = "ContentRating";
-
-        /// <summary>
-        /// Name of the <see cref="Episodes"/> property.
-        /// </summary>
-        private const string EpisodesName = "Episodes";
-
-        /// <summary>
-        /// Name of the <see cref="FanArt"/> property.
-        /// </summary>
-        private const string FanArtName = "FanArt";
-
-        /// <summary>
-        /// Name of the <see cref="Genre"/> property.
-        /// </summary>
-        private const string GenreName = "Genre";
-
-        /// <summary>
-        /// Name of the <see cref="HasEpisodes"/> property.
-        /// </summary>
-        private const string HasEpisodesName = "HasEpisodes";
-
-        /// <summary>
-        /// Name of the <see cref="LastUpdated"/> property.
-        /// </summary>
-        private const string LastUpdatedName = "LastUpdated";
-
-        /// <summary>
-        /// Name of the <see cref="NetworkId"/> property.
-        /// </summary>
-        private const string NetworkIdName = "NetworkId";
-
-        /// <summary>
-        /// Name of the <see cref="Network"/> property.
-        /// </summary>
-        private const string NetworkName = "Network";
-
-        /// <summary>
-        /// Name of the <see cref="Poster"/> property.
-        /// </summary>
-        private const string PosterName = "Poster";
-
-        /// <summary>
-        /// Name of the <see cref="RatingCount"/> property.
-        /// </summary>
-        private const string RatingCountName = "RatingCount";
-
-        /// <summary>
-        /// Name of the <see cref="Rating"/> property.
-        /// </summary>
-        private const string RatingName = "Rating";
-
-        /// <summary>
-        /// Name of the <see cref="Runtime"/> property.
-        /// </summary>
-        private const string RuntimeName = "Runtime";
-
-        /// <summary>
-        /// Name of the <see cref="SeriesId"/> property.
-        /// </summary>
-        private const string SeriesIdName = "SeriesId";
-
-        /// <summary>
-        /// Name of the <see cref="Status"/> property.
-        /// </summary>
-        private const string StatusName = "Status";
-
-        /// <summary>
-        /// Name of the <see cref="TmsWanted"/> property.
-        /// </summary>
-        private const string TmsWantedName = "TMSWanted";
-
-        /// <summary>
-        /// Name of the <see cref="Zap2ItId"/> property.
-        /// </summary>
-        private const string Zap2ItIdName = "Zap2ItId";
-
         /// <summary>
         /// All actors of the series.
         /// </summary>
@@ -260,7 +139,7 @@ namespace TVDB.Model
                 }
 
                 _actorsCollection = value;
-                RaisePropertyChanged(ActorCollectionName);
+                OnPropertyChanged();
             }
         }
 
@@ -273,13 +152,13 @@ namespace TVDB.Model
 
             set
             {
-                if (value == _actors)
+                if (string.Equals(value, _actors, StringComparison.OrdinalIgnoreCase))
                 {
                     return;
                 }
 
                 _actors = value;
-                RaisePropertyChanged(ActorsName);
+                OnPropertyChanged();
             }
         }
 
@@ -298,7 +177,7 @@ namespace TVDB.Model
                 }
 
                 _addedByUserId = value;
-                RaisePropertyChanged(AddedByUserIdName);
+                OnPropertyChanged();
             }
         }
 
@@ -317,7 +196,7 @@ namespace TVDB.Model
                 }
 
                 _addedDate = value;
-                RaisePropertyChanged(AddedDateName);
+                OnPropertyChanged();
             }
         }
 
@@ -330,13 +209,13 @@ namespace TVDB.Model
 
             set
             {
-                if (value == _airsDayOfWeek)
+                if (string.Equals(value, _airsDayOfWeek, StringComparison.OrdinalIgnoreCase))
                 {
                     return;
                 }
 
                 _airsDayOfWeek = value;
-                RaisePropertyChanged(AirsDayOfWeekName);
+                OnPropertyChanged();
             }
         }
 
@@ -349,13 +228,13 @@ namespace TVDB.Model
 
             set
             {
-                if (value == _airsTime)
+                if (string.Equals(value, _airsTime, StringComparison.OrdinalIgnoreCase))
                 {
                     return;
                 }
 
                 _airsTime = value;
-                RaisePropertyChanged(AirsTimeName);
+                OnPropertyChanged();
             }
         }
 
@@ -368,13 +247,13 @@ namespace TVDB.Model
 
             set
             {
-                if (value == _bannerPath)
+                if (string.Equals(value, _bannerPath, StringComparison.OrdinalIgnoreCase))
                 {
                     return;
                 }
 
                 _bannerPath = value;
-                RaisePropertyChanged(BannerName);
+                OnPropertyChanged();
             }
         }
 
@@ -387,13 +266,13 @@ namespace TVDB.Model
 
             set
             {
-                if (value == _contentRating)
+                if (string.Equals(value, _contentRating, StringComparison.OrdinalIgnoreCase))
                 {
                     return;
                 }
 
                 _contentRating = value;
-                RaisePropertyChanged(ContentRatingName);
+                OnPropertyChanged();
             }
         }
 
@@ -412,7 +291,7 @@ namespace TVDB.Model
                 }
 
                 _episodes = value;
-                RaisePropertyChanged(EpisodesName);
+                OnPropertyChanged();
             }
         }
 
@@ -425,13 +304,13 @@ namespace TVDB.Model
 
             set
             {
-                if (value == _fanArt)
+                if (string.Equals(value, _fanArt, StringComparison.OrdinalIgnoreCase))
                 {
                     return;
                 }
 
                 _fanArt = value;
-                RaisePropertyChanged(FanArtName);
+                OnPropertyChanged();
             }
         }
 
@@ -444,13 +323,13 @@ namespace TVDB.Model
 
             set
             {
-                if (value == _genre)
+                if (string.Equals(value, _genre, StringComparison.OrdinalIgnoreCase))
                 {
                     return;
                 }
 
                 _genre = value;
-                RaisePropertyChanged(GenreName);
+                OnPropertyChanged();
             }
         }
 
@@ -469,7 +348,7 @@ namespace TVDB.Model
                 }
 
                 _hasEpisodes = value;
-                RaisePropertyChanged(HasEpisodesName);
+                OnPropertyChanged();
             }
         }
 
@@ -488,7 +367,7 @@ namespace TVDB.Model
                 }
 
                 _lastUpdated = value;
-                RaisePropertyChanged(LastUpdatedName);
+                OnPropertyChanged();
             }
         }
 
@@ -501,13 +380,13 @@ namespace TVDB.Model
 
             set
             {
-                if (value == _network)
+                if (string.Equals(value, _network, StringComparison.OrdinalIgnoreCase))
                 {
                     return;
                 }
 
                 _network = value;
-                RaisePropertyChanged(NetworkName);
+                OnPropertyChanged();
             }
         }
 
@@ -526,7 +405,7 @@ namespace TVDB.Model
                 }
 
                 _networkId = value;
-                RaisePropertyChanged(NetworkIdName);
+                OnPropertyChanged();
             }
         }
 
@@ -539,13 +418,13 @@ namespace TVDB.Model
 
             set
             {
-                if (value == _poster)
+                if (string.Equals(value, _poster, StringComparison.OrdinalIgnoreCase))
                 {
                     return;
                 }
 
                 _poster = value;
-                RaisePropertyChanged(PosterName);
+                OnPropertyChanged();
             }
         }
 
@@ -564,7 +443,7 @@ namespace TVDB.Model
                 }
 
                 _rating = value;
-                RaisePropertyChanged(RatingName);
+                OnPropertyChanged();
             }
         }
 
@@ -583,7 +462,7 @@ namespace TVDB.Model
                 }
 
                 _ratingCount = value;
-                RaisePropertyChanged(RatingCountName);
+                OnPropertyChanged();
             }
         }
 
@@ -602,7 +481,7 @@ namespace TVDB.Model
                 }
 
                 _runtime = value;
-                RaisePropertyChanged(RuntimeName);
+                OnPropertyChanged();
             }
         }
 
@@ -621,7 +500,7 @@ namespace TVDB.Model
                 }
 
                 _seriesId = value;
-                RaisePropertyChanged(SeriesIdName);
+                OnPropertyChanged();
             }
         }
 
@@ -634,13 +513,13 @@ namespace TVDB.Model
 
             set
             {
-                if (value == _status)
+                if (string.Equals(value, _status, StringComparison.OrdinalIgnoreCase))
                 {
                     return;
                 }
 
                 _status = value;
-                RaisePropertyChanged(StatusName);
+                OnPropertyChanged();
             }
         }
 
@@ -659,7 +538,7 @@ namespace TVDB.Model
                 }
 
                 _tmsWanted = value;
-                RaisePropertyChanged(TmsWantedName);
+                OnPropertyChanged();
             }
         }
 
@@ -672,13 +551,13 @@ namespace TVDB.Model
 
             set
             {
-                if (value == _zap2ItId)
+                if (string.Equals(value, _zap2ItId, StringComparison.OrdinalIgnoreCase))
                 {
                     return;
                 }
 
                 _zap2ItId = value;
-                RaisePropertyChanged(Zap2ItIdName);
+                OnPropertyChanged();
             }
         }
 

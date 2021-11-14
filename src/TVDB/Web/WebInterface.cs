@@ -1,9 +1,3 @@
-// -----------------------------------------------------------------------
-// <copyright company="Christoph van der Fecht - VDsoft">
-// This code can be used in commercial, free and open source projects.
-// </copyright>
-// -----------------------------------------------------------------------
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -29,12 +23,12 @@ namespace TVDB.Web
         /// <summary>
         /// WebClient to download the file.
         /// </summary>
-        private readonly WebClient _client = new WebClient();
+        private readonly WebClient _client = new();
 
         /// <summary>
         /// Default mirror site to connect to the api.
         /// </summary>
-        private Mirror _defaultMirror;
+        private Mirror? _defaultMirror;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WebInterface"/> class, using the provided API key.
@@ -102,7 +96,7 @@ namespace TVDB.Web
         /// }
         /// </code>
         /// </example>
-        public async Task<SeriesDetails> GetFullSeriesById(int id, Mirror mirror)
+        public async Task<SeriesDetails?> GetFullSeriesByIdAsync(int id, Mirror? mirror)
         {
             if (id == 0)
             {
@@ -114,8 +108,7 @@ namespace TVDB.Web
                 return null;
             }
 
-            var result = await GetFullSeriesById(id, "en", mirror).ConfigureAwait(false);
-            return result;
+            return await GetFullSeriesByIdAsync(id, "en", mirror).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -149,7 +142,7 @@ namespace TVDB.Web
         /// }
         /// </code>
         /// </example>
-        public async Task<SeriesDetails> GetFullSeriesById(int id, string languageAbbreviation, Mirror mirror)
+        public async Task<SeriesDetails?> GetFullSeriesByIdAsync(int id, string languageAbbreviation, Mirror? mirror)
         {
             if (id == 0)
             {
@@ -172,9 +165,8 @@ namespace TVDB.Web
             // store the zip file.
             using (var zipFile = new FileStream(LoadedSeriesPath, FileMode.Create, FileAccess.Write))
             {
-                await zipFile.WriteAsync(result, 0, result.Length);
-                await zipFile.FlushAsync();
-                zipFile.Close();
+                await zipFile.WriteAsync(result, 0, result.Length).ConfigureAwait(false);
+                await zipFile.FlushAsync().ConfigureAwait(false);
             }
 
             var dirInfo = new DirectoryInfo(Path.Combine(FileDirectory, "extraction"));
@@ -192,9 +184,7 @@ namespace TVDB.Web
                 }
             }
 
-            var details = new SeriesDetails(dirInfo.FullName, languageAbbreviation);
-
-            return details;
+            return new SeriesDetails(dirInfo.FullName, languageAbbreviation);
         }
 
         /// <summary>
@@ -225,15 +215,15 @@ namespace TVDB.Web
         /// }
         /// </code>
         /// </example>
-        public async Task<List<Language>> GetLanguages()
+        public async Task<IList<Language>?> GetLanguagesAsync()
         {
             // get the default mirror.
             if (_defaultMirror == null)
             {
-                await GetMirrors();
+                await GetMirrorsAsync().ConfigureAwait(false);
             }
 
-            return await GetLanguages(_defaultMirror).ConfigureAwait(false);
+            return await GetLanguagesAsync(_defaultMirror).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -265,7 +255,7 @@ namespace TVDB.Web
         /// }
         /// </code>
         /// </example>
-        public async Task<List<Language>> GetLanguages(Mirror mirror)
+        public async Task<IList<Language>?> GetLanguagesAsync(Mirror? mirror)
         {
             if (mirror == null)
             {
@@ -275,8 +265,7 @@ namespace TVDB.Web
             const string url = "{0}/api/{1}/languages.xml";
 
             var result = await _client.DownloadDataTaskAsync(string.Format(url, mirror.Address, _apiKey)).ConfigureAwait(false);
-            var resultStream = new MemoryStream(result);
-
+            using var resultStream = new MemoryStream(result);
             var doc = new XmlDocument();
             doc.Load(resultStream);
             var dataNode = doc.ChildNodes[doc.ChildNodes.Count - 1];
@@ -323,7 +312,7 @@ namespace TVDB.Web
         /// }
         /// </code>
         /// </example>
-        public async Task<List<Mirror>> GetMirrors()
+        public async Task<IList<Mirror>> GetMirrorsAsync()
         {
             const string url = "http://thetvdb.com/api/{0}/mirrors.xml";
 
@@ -338,7 +327,7 @@ namespace TVDB.Web
                 throw new Exception("Source seems to be offline.", ex);
             }
 
-            var resultStream = new MemoryStream(result);
+            using var resultStream = new MemoryStream(result);
             var doc = new XmlDocument();
             doc.Load(resultStream);
 
@@ -351,14 +340,11 @@ namespace TVDB.Web
                 var deserialized = new Mirror();
                 deserialized.Deserialize(current);
 
-                if (_defaultMirror == null)
+                if (_defaultMirror == null && deserialized.ContainsBannerFile &&
+                    deserialized.ContainsXmlFile &&
+                    deserialized.ContainsZipFile)
                 {
-                    if (deserialized.ContainsBannerFile &&
-                        deserialized.ContainsXmlFile &&
-                        deserialized.ContainsZipFile)
-                    {
-                        _defaultMirror = deserialized;
-                    }
+                    _defaultMirror = deserialized;
                 }
 
                 receivedMirrors.Add(deserialized);
@@ -400,7 +386,7 @@ namespace TVDB.Web
         /// }
         /// </code>
         /// </example>
-        public async Task<List<Series>> GetSeriesByName(string name, Mirror mirror)
+        public async Task<IList<Series>?> GetSeriesByNameAsync(string name, Mirror? mirror)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -412,7 +398,7 @@ namespace TVDB.Web
                 return null;
             }
 
-            return await GetSeriesByName(name, "en", mirror).ConfigureAwait(false);
+            return await GetSeriesByNameAsync(name, "en", mirror).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -446,7 +432,7 @@ namespace TVDB.Web
         /// }
         /// </code>
         /// </example>
-        public async Task<List<Series>> GetSeriesByName(string name, string languageAbbreviation, Mirror mirror)
+        public async Task<IList<Series>?> GetSeriesByNameAsync(string name, string languageAbbreviation, Mirror? mirror)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -466,8 +452,7 @@ namespace TVDB.Web
             const string url = "{0}/api/GetSeries.php?seriesname={1}&language={2}";
 
             var result = await _client.DownloadDataTaskAsync(string.Format(url, mirror.Address, name, languageAbbreviation)).ConfigureAwait(false);
-            var resultStream = new MemoryStream(result);
-
+            using var resultStream = new MemoryStream(result);
             var doc = new XmlDocument();
             doc.Load(resultStream);
             var dataNode = doc.ChildNodes[doc.ChildNodes.Count - 1];
@@ -481,7 +466,7 @@ namespace TVDB.Web
                 series.Add(deserialized);
             }
 
-            return series.Where(x => x.Language.Equals(languageAbbreviation)).ToList();
+            return series.Where(x => x.Language.Equals(languageAbbreviation, StringComparison.OrdinalIgnoreCase)).ToList();
         }
 
         /// <summary>
@@ -518,7 +503,7 @@ namespace TVDB.Web
         /// }
         /// </code>
         /// </example>
-        public async Task<List<Series>> GetSeriesByRemoteId(string imdbId, string zap2Id, Mirror mirror)
+        public async Task<IList<Series>?> GetSeriesByRemoteIdAsync(string imdbId, string zap2Id, Mirror? mirror)
         {
             if (string.IsNullOrEmpty(imdbId) && string.IsNullOrEmpty(zap2Id))
             {
@@ -535,8 +520,7 @@ namespace TVDB.Web
                 return null;
             }
 
-            var result = await GetSeriesByRemoteId(imdbId, zap2Id, "en", mirror).ConfigureAwait(false);
-            return result;
+            return await GetSeriesByRemoteIdAsync(imdbId, zap2Id, "en", mirror).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -574,7 +558,7 @@ namespace TVDB.Web
         /// }
         /// </code>
         /// </example>
-        public async Task<List<Series>> GetSeriesByRemoteId(string imdbId, string zap2Id, string languageAbbreviation, Mirror mirror)
+        public async Task<IList<Series>?> GetSeriesByRemoteIdAsync(string imdbId, string zap2Id, string languageAbbreviation, Mirror? mirror)
         {
             if (string.IsNullOrEmpty(imdbId) && string.IsNullOrEmpty(zap2Id))
             {
@@ -599,8 +583,7 @@ namespace TVDB.Web
             const string url = "{0}/api/GetSeriesByRemoteID.php?imdbid={1}&language={2}&zap2it={3}";
 
             var result = await _client.DownloadDataTaskAsync(string.Format(url, mirror.Address, imdbId, languageAbbreviation, zap2Id)).ConfigureAwait(false);
-            var resultStream = new MemoryStream(result);
-
+            using var resultStream = new MemoryStream(result);
             var doc = new XmlDocument();
             doc.Load(resultStream);
 

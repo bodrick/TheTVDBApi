@@ -9,7 +9,7 @@ namespace TVDB.Test.Model
         /// <summary>
         /// Path of the extracted test data.
         /// </summary>
-        private const string TestExtractionPath = @"..\..\..\TVDB.Test\TestData\Extracted\";
+        private const string TestExtractionPath = @"TestData\Extracted\";
 
         #region Constructor tests
 
@@ -90,25 +90,5 @@ namespace TVDB.Test.Model
         }
 
         #endregion Deserialize tests
-
-        #region Dispose tests
-
-        [Fact]
-        public void DisposeTestSuccessful()
-        {
-            var target = new SeriesDetails(TestExtractionPath, "en");
-
-            var dummyCall = target.Actors;
-            dummyCall = null;
-
-            target.Dispose();
-
-            Assert.Null(target.Language);
-            Assert.Null(target.Actors);
-            Assert.Null(target.Banners);
-            Assert.Null(target.Series);
-        }
-
-        #endregion Dispose tests
     }
 }

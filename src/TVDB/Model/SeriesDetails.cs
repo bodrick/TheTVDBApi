@@ -1,9 +1,3 @@
-// -----------------------------------------------------------------------
-// <copyright company="Christoph van der Fecht - VDsoft">
-// This code can be used in commercial, free and open source projects.
-// </copyright>
-// -----------------------------------------------------------------------
-
 using System;
 using System.Collections.Generic;
 using System.Xml;
@@ -13,47 +7,42 @@ namespace TVDB.Model
     /// <summary>
     /// Contains all details for the requested series like Actors, Banners and all episodes of the series.
     /// </summary>
-    public class SeriesDetails : IDisposable
+    public class SeriesDetails
     {
-        /// <summary>
-        /// The Actors.
-        /// </summary>
-        private List<Actor> _actors;
-
         /// <summary>
         /// Xml document that contains all actors.
         /// </summary>
-        private XmlDocument _actorsDoc;
-
-        /// <summary>
-        /// The Banners.
-        /// </summary>
-        private List<Banner> _banners;
+        private readonly XmlDocument _actorsDoc;
 
         /// <summary>
         /// Xml document that contains all banners.
         /// </summary>
-        private XmlDocument _bannersDoc;
-
-        /// <summary>
-        /// Path of the extracted files.
-        /// </summary>
-        private string _extractionPath;
-
-        /// <summary>
-        /// The Language.
-        /// </summary>
-        private string _language;
+        private readonly XmlDocument _bannersDoc;
 
         /// <summary>
         /// Xml document that contains all details of a series.
         /// </summary>
-        private XmlDocument _languageDoc;
+        private readonly XmlDocument _languageDoc;
+
+        /// <summary>
+        /// The Actors.
+        /// </summary>
+        private IList<Actor>? _actors;
+
+        /// <summary>
+        /// The Banners.
+        /// </summary>
+        private IList<Banner>? _banners;
+
+        /// <summary>
+        /// The Language.
+        /// </summary>
+        private string? _language;
 
         /// <summary>
         /// The Series.
         /// </summary>
-        private Series _series;
+        private Series? _series;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SeriesDetails"/> class.
@@ -75,26 +64,25 @@ namespace TVDB.Model
                 throw new ArgumentNullException(nameof(language), "Provided language must not be null or empty.");
             }
 
-            _extractionPath = extractionPath;
             Language = language;
 
             // load actors xml.
             _actorsDoc = new XmlDocument();
-            _actorsDoc.Load(System.IO.Path.Combine(_extractionPath, "actors.xml"));
+            _actorsDoc.Load(System.IO.Path.Combine(extractionPath, "actors.xml"));
 
             // load banners xml.
             _bannersDoc = new XmlDocument();
-            _bannersDoc.Load(System.IO.Path.Combine(_extractionPath, "banners.xml"));
+            _bannersDoc.Load(System.IO.Path.Combine(extractionPath, "banners.xml"));
 
             // load series xml.
             _languageDoc = new XmlDocument();
-            _languageDoc.Load(System.IO.Path.Combine(_extractionPath, $"{Language}.xml"));
+            _languageDoc.Load(System.IO.Path.Combine(extractionPath, $"{Language}.xml"));
         }
 
         /// <summary>
         /// Gets or sets the Actors property.
         /// </summary>
-        public List<Actor> Actors
+        public IList<Actor>? Actors
         {
             get
             {
@@ -108,7 +96,7 @@ namespace TVDB.Model
 
             private set
             {
-                if (value == _actors)
+                if (Equals(value, _actors))
                 {
                     return;
                 }
@@ -120,7 +108,7 @@ namespace TVDB.Model
         /// <summary>
         /// Gets or sets the Banners property.
         /// </summary>
-        public List<Banner> Banners
+        public IList<Banner>? Banners
         {
             get
             {
@@ -132,9 +120,9 @@ namespace TVDB.Model
                 return _banners;
             }
 
-            set
+            private set
             {
-                if (value == _banners)
+                if (Equals(value, _banners))
                 {
                     return;
                 }
@@ -146,13 +134,13 @@ namespace TVDB.Model
         /// <summary>
         /// Gets or sets the Language property.
         /// </summary>
-        public string Language
+        public string? Language
         {
             get => _language;
 
             private set
             {
-                if (value == _language)
+                if (string.Equals(value, _language, StringComparison.OrdinalIgnoreCase))
                 {
                     return;
                 }
@@ -164,7 +152,7 @@ namespace TVDB.Model
         /// <summary>
         /// Gets or sets the Series property.
         /// </summary>
-        public Series Series
+        public Series? Series
         {
             get
             {
@@ -178,7 +166,7 @@ namespace TVDB.Model
 
             private set
             {
-                if (value == _series)
+                if (Equals(value, _series))
                 {
                     return;
                 }
@@ -188,49 +176,17 @@ namespace TVDB.Model
         }
 
         /// <summary>
-        /// Releases all resources of the class.
-        /// </summary>
-        public void Dispose()
-        {
-            _language = null;
-            _extractionPath = null;
-
-            _actorsDoc = null;
-            _bannersDoc = null;
-            _languageDoc = null;
-
-            if (Actors != null)
-            {
-                _actors.Clear();
-                _actors = null;
-            }
-
-            if (Banners != null)
-            {
-                _banners.Clear();
-                _banners = null;
-            }
-
-            if (Series != null)
-            {
-                _series = null;
-            }
-        }
-
-        /// <summary>
         /// Deserializes all actors of the series.
         /// </summary>
         private void DeserializeActors()
         {
-            if (_actorsDoc == null || _actorsDoc.ChildNodes.Count == 0)
+            if (_actorsDoc.ChildNodes.Count == 0)
             {
                 return;
             }
 
             Actors = new List<Actor>();
-            var actorsNode = _actorsDoc.ChildNodes[_actorsDoc.ChildNodes.Count - 1];
-
-            foreach (XmlNode currentNode in actorsNode)
+            foreach (XmlNode currentNode in _actorsDoc.ChildNodes[_actorsDoc.ChildNodes.Count - 1])
             {
                 if (currentNode.Name.Equals("Actor", StringComparison.OrdinalIgnoreCase))
                 {
@@ -247,7 +203,7 @@ namespace TVDB.Model
         /// </summary>
         private void DeserializeBanners()
         {
-            if (_bannersDoc == null || _bannersDoc.ChildNodes.Count == 0)
+            if (_bannersDoc.ChildNodes.Count == 0)
             {
                 return;
             }
@@ -272,13 +228,13 @@ namespace TVDB.Model
         /// </summary>
         private void DeserializeSeries()
         {
-            if (_languageDoc == null || _languageDoc.ChildNodes.Count == 0)
+            if (_languageDoc.ChildNodes.Count == 0)
             {
                 return;
             }
 
             Series = new Series();
-            if (Actors != null && Actors.Count > 0)
+            if (Actors?.Count > 0)
             {
                 Series.ActorCollection = new System.Collections.ObjectModel.ObservableCollection<Actor>(Actors);
             }
@@ -293,13 +249,10 @@ namespace TVDB.Model
                     deserialized.Deserialize(currentNode);
 
                     Series.AddEpisode(deserialized);
-                    continue;
                 }
-
-                if (currentNode.Name.Equals("Series", StringComparison.OrdinalIgnoreCase))
+                else if (currentNode.Name.Equals("Series", StringComparison.OrdinalIgnoreCase))
                 {
                     Series.Deserialize(currentNode);
-                    continue;
                 }
             }
         }

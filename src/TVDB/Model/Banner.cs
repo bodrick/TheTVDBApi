@@ -1,11 +1,6 @@
-// -----------------------------------------------------------------------
-// <copyright company="Christoph van der Fecht - VDsoft">
-// This code can be used in commercial, free and open source projects.
-// </copyright>
-// -----------------------------------------------------------------------
-
 using System;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Xml;
 
 namespace TVDB.Model
@@ -13,32 +8,32 @@ namespace TVDB.Model
     /// <summary>
     /// Types of a banner
     /// </summary>
-    public enum BannerTyp
+    public enum BannerType
     {
         /// <summary>
         /// A Fanart.
         /// </summary>
-        Fanart,
+        Fanart = 0,
 
         /// <summary>
         /// Original poster.
         /// </summary>
-        Poster,
+        Poster = 1,
 
         /// <summary>
         /// Season image.
         /// </summary>
-        Season,
+        Season = 2,
 
         /// <summary>
         /// Series image.
         /// </summary>
-        Series,
+        Series = 3,
 
         /// <summary>
         /// Default value.
         /// </summary>
-        Unknown
+        Unknown = 4
     }
 
     /// <summary>
@@ -47,79 +42,19 @@ namespace TVDB.Model
     public class Banner : INotifyPropertyChanged, Interfaces.IXmlSerializer
     {
         /// <summary>
-        /// Name of the <see cref="BannerPath"/> property.
-        /// </summary>
-        private const string BannerPathName = "BannerPath";
-
-        /// <summary>
-        /// Name of the <see cref="Color"/> property.
-        /// </summary>
-        private const string ColorName = "Color";
-
-        /// <summary>
-        /// Name of the <see cref="Dimension"/> property.
-        /// </summary>
-        private const string DimensionName = "Dimension";
-
-        /// <summary>
-        /// Name of the <see cref="Id"/> property.
-        /// </summary>
-        private const string IdName = "Id";
-
-        /// <summary>
-        /// Name of the <see cref="Language"/> property.
-        /// </summary>
-        private const string LanguageName = "Language";
-
-        /// <summary>
-        /// Name of the <see cref="RatingCount"/> property.
-        /// </summary>
-        private const string RatingCountName = "RatingCount";
-
-        /// <summary>
-        /// Name of the <see cref="Rating"/> property.
-        /// </summary>
-        private const string RatingName = "Rating";
-
-        /// <summary>
-        /// Name of the <see cref="Season"/> property.
-        /// </summary>
-        private const string SeasonName = "Season";
-
-        /// <summary>
-        /// Name of the <see cref="SeriesName"/> property.
-        /// </summary>
-        private const string SeriesNameName = "SeriesName";
-
-        /// <summary>
-        /// Name of the <see cref="ThumbnailPath"/> property.
-        /// </summary>
-        private const string ThumbnailPathName = "ThumbnailPath";
-
-        /// <summary>
-        /// Name of the <see cref="Type"/> property.
-        /// </summary>
-        private const string TypeName = "Type";
-
-        /// <summary>
-        /// Name of the <see cref="VignettePath"/> property.
-        /// </summary>
-        private const string VignettePathName = "VignettePath";
-
-        /// <summary>
         /// Path of the image.
         /// </summary>
-        private string _bannerPath;
+        private string? _bannerPath;
 
         /// <summary>
         /// Colors of the banner.
         /// </summary>
-        private string _colors;
+        private string? _colors;
 
         /// <summary>
         /// Dimension of the image.
         /// </summary>
-        private string _dimension;
+        private string? _dimension;
 
         /// <summary>
         /// Id of the banner.
@@ -129,7 +64,7 @@ namespace TVDB.Model
         /// <summary>
         /// Language of the banner image.
         /// </summary>
-        private string _language;
+        private string? _language;
 
         /// <summary>
         /// Rating fo the banner.
@@ -154,77 +89,77 @@ namespace TVDB.Model
         /// <summary>
         /// Path to the thumbnail of the image.
         /// </summary>
-        private string _thumbnailPath;
+        private string? _thumbnailPath;
 
         /// <summary>
         /// Type of the banner.
         /// </summary>
-        private BannerTyp _type = BannerTyp.Unknown;
+        private BannerType _type = BannerType.Unknown;
 
         /// <summary>
         /// Path to the vignette image.
         /// </summary>
-        private string _vignettePath;
+        private string? _vignettePath;
 
         /// <summary>
         /// Occurs when a property changed its value
         /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         /// <summary>
         /// Gets or sets the Path of the image.
         /// </summary>
-        public string BannerPath
+        public string? BannerPath
         {
             get => _bannerPath;
 
             set
             {
-                if (value == _bannerPath)
+                if (string.Equals(value, _bannerPath, StringComparison.OrdinalIgnoreCase))
                 {
                     return;
                 }
 
                 _bannerPath = value;
-                RaisePropertyChanged(BannerPathName);
+                OnPropertyChanged();
             }
         }
 
         /// <summary>
         /// Gets or sets the Colors of the banner.
         /// </summary>
-        public string Color
+        public string? Color
         {
             get => _colors;
 
             set
             {
-                if (value == _colors)
+                if (string.Equals(value, _colors, StringComparison.OrdinalIgnoreCase))
                 {
                     return;
                 }
 
                 _colors = value;
-                RaisePropertyChanged(ColorName);
+                OnPropertyChanged();
             }
         }
 
         /// <summary>
         /// Gets or sets the Dimension of the image.
         /// </summary>
-        public string Dimension
+        public string? Dimension
         {
             get => _dimension;
 
             set
             {
-                if (value == _dimension)
+                if (string.Equals(value, _dimension, StringComparison.OrdinalIgnoreCase))
                 {
                     return;
                 }
 
                 _dimension = value;
-                RaisePropertyChanged(DimensionName);
+                OnPropertyChanged();
             }
         }
 
@@ -243,26 +178,26 @@ namespace TVDB.Model
                 }
 
                 _id = value;
-                RaisePropertyChanged(IdName);
+                OnPropertyChanged();
             }
         }
 
         /// <summary>
         /// Gets or sets the Language of the banner image.
         /// </summary>
-        public string Language
+        public string? Language
         {
             get => _language;
 
             set
             {
-                if (value == _language)
+                if (string.Equals(value, _language, StringComparison.OrdinalIgnoreCase))
                 {
                     return;
                 }
 
                 _language = value;
-                RaisePropertyChanged(LanguageName);
+                OnPropertyChanged();
             }
         }
 
@@ -281,7 +216,7 @@ namespace TVDB.Model
                 }
 
                 _rating = value;
-                RaisePropertyChanged(RatingName);
+                OnPropertyChanged();
             }
         }
 
@@ -300,7 +235,7 @@ namespace TVDB.Model
                 }
 
                 _ratingCount = value;
-                RaisePropertyChanged(RatingCountName);
+                OnPropertyChanged();
             }
         }
 
@@ -319,7 +254,7 @@ namespace TVDB.Model
                 }
 
                 _season = value;
-                RaisePropertyChanged(SeasonName);
+                OnPropertyChanged();
             }
         }
 
@@ -338,33 +273,33 @@ namespace TVDB.Model
                 }
 
                 _seriesName = value;
-                RaisePropertyChanged(SeriesNameName);
+                OnPropertyChanged();
             }
         }
 
         /// <summary>
         /// Gets or sets the Path to the thumbnail of the image.
         /// </summary>
-        public string ThumbnailPath
+        public string? ThumbnailPath
         {
             get => _thumbnailPath;
 
             set
             {
-                if (value == _thumbnailPath)
+                if (string.Equals(value, _thumbnailPath, StringComparison.OrdinalIgnoreCase))
                 {
                     return;
                 }
 
                 _thumbnailPath = value;
-                RaisePropertyChanged(ThumbnailPathName);
+                OnPropertyChanged();
             }
         }
 
         /// <summary>
         /// Gets or sets the Type of the banner.
         /// </summary>
-        public BannerTyp Type
+        public BannerType Type
         {
             get => _type;
 
@@ -376,26 +311,26 @@ namespace TVDB.Model
                 }
 
                 _type = value;
-                RaisePropertyChanged(TypeName);
+                OnPropertyChanged();
             }
         }
 
         /// <summary>
         /// Gets or sets the Path to the vignette image.
         /// </summary>
-        public string VignettePath
+        public string? VignettePath
         {
             get => _vignettePath;
 
             set
             {
-                if (value == _vignettePath)
+                if (string.Equals(value, _vignettePath, StringComparison.OrdinalIgnoreCase))
                 {
                     return;
                 }
 
                 _vignettePath = value;
-                RaisePropertyChanged(VignettePathName);
+                OnPropertyChanged();
             }
         }
 
@@ -454,110 +389,70 @@ namespace TVDB.Model
         /// }
         /// </code>
         /// </example>
-        public void Deserialize(XmlNode node)
+        public void Deserialize(XmlNode? node)
         {
             if (node == null)
             {
                 throw new ArgumentNullException(nameof(node), "Provided node must not be null.");
             }
 
-            var cultureInfo = System.Globalization.CultureInfo.CreateSpecificCulture("en-US");
-
             foreach (XmlNode currentNode in node.ChildNodes)
             {
-                if (currentNode.Name.Equals("id", StringComparison.OrdinalIgnoreCase))
+                switch (currentNode.Name)
                 {
-                    int.TryParse(currentNode.InnerText, out var result);
-                    Id = result;
-                    continue;
-                }
+                    case "id" when int.TryParse(currentNode.InnerText, out var result):
+                        Id = result;
+                        break;
 
-                if (currentNode.Name.Equals("BannerPath", StringComparison.OrdinalIgnoreCase))
-                {
-                    if (!string.IsNullOrEmpty(currentNode.InnerText))
-                    {
+                    case "BannerPath" when !string.IsNullOrEmpty(currentNode.InnerText):
                         BannerPath = currentNode.InnerText;
-                    }
-                    continue;
-                }
+                        break;
 
-                if (currentNode.Name.Equals("BannerType", StringComparison.OrdinalIgnoreCase))
-                {
-                    Enum.TryParse(currentNode.InnerText, out BannerTyp currentTyp);
-                    Type = currentTyp;
-                    continue;
-                }
-                if (currentNode.Name.Equals("BannerType2", StringComparison.OrdinalIgnoreCase))
-                {
-                    if (!string.IsNullOrEmpty(currentNode.InnerText))
-                    {
+                    case "BannerType" when Enum.TryParse(currentNode.InnerText, out BannerType bannerType):
+                        Type = bannerType;
+                        break;
+
+                    case "BannerType2" when !string.IsNullOrEmpty(currentNode.InnerText):
                         Dimension = currentNode.InnerText;
-                    }
-                    continue;
-                }
-                if (currentNode.Name.Equals("Colors", StringComparison.OrdinalIgnoreCase))
-                {
-                    if (!string.IsNullOrEmpty(currentNode.InnerText))
-                    {
+                        break;
+
+                    case "Colors" when !string.IsNullOrEmpty(currentNode.InnerText):
                         Color = currentNode.InnerText;
-                    }
-                    continue;
-                }
-                if (currentNode.Name.Equals("Language", StringComparison.OrdinalIgnoreCase))
-                {
-                    if (!string.IsNullOrEmpty(currentNode.InnerText))
-                    {
+                        break;
+
+                    case "Language" when !string.IsNullOrEmpty(currentNode.InnerText):
                         Language = currentNode.InnerText;
-                    }
-                    continue;
-                }
-                if (currentNode.Name.Equals("Rating", StringComparison.OrdinalIgnoreCase))
-                {
-                    double.TryParse(currentNode.InnerText, System.Globalization.NumberStyles.Number, cultureInfo, out var result);
-                    Rating = result;
-                    continue;
-                }
-                if (currentNode.Name.Equals("RatingCount", StringComparison.OrdinalIgnoreCase))
-                {
-                    int.TryParse(currentNode.InnerText, out var result);
-                    RatingCount = result;
-                    continue;
-                }
-                if (currentNode.Name.Equals("SeriesName", StringComparison.OrdinalIgnoreCase))
-                {
-                    bool.TryParse(currentNode.InnerText, out var result);
-                    SeriesName = result;
-                    continue;
-                }
-                if (currentNode.Name.Equals("ThumbnailPath", StringComparison.OrdinalIgnoreCase))
-                {
-                    if (!string.IsNullOrEmpty(currentNode.InnerText))
-                    {
+                        break;
+
+                    case "Rating" when double.TryParse(currentNode.InnerText, out var result):
+                        Rating = result;
+                        break;
+
+                    case "RatingCount" when int.TryParse(currentNode.InnerText, out var result):
+                        RatingCount = result;
+                        break;
+
+                    case "SeriesName" when bool.TryParse(currentNode.InnerText, out var result):
+                        SeriesName = result;
+                        break;
+
+                    case "ThumbnailPath" when !string.IsNullOrEmpty(currentNode.InnerText):
                         ThumbnailPath = currentNode.InnerText;
-                    }
-                    continue;
-                }
-                if (currentNode.Name.Equals("VignettePath", StringComparison.OrdinalIgnoreCase))
-                {
-                    if (!string.IsNullOrEmpty(currentNode.InnerText))
-                    {
+                        break;
+
+                    case "VignettePath" when !string.IsNullOrEmpty(currentNode.InnerText):
                         VignettePath = currentNode.InnerText;
-                    }
-                    continue;
-                }
-                if (currentNode.Name.Equals("Season", StringComparison.OrdinalIgnoreCase))
-                {
-                    int.TryParse(currentNode.InnerText, out var result);
-                    Season = result;
-                    continue;
+                        break;
+
+                    case "Season" when int.TryParse(currentNode.InnerText, out var result):
+                        Season = result;
+                        break;
                 }
             }
         }
 
-        /// <summary>
-        /// Raises the <see cref="PropertyChanged"/> event.
-        /// </summary>
-        /// <param name="propertyName">Name fo the property that changed its value.</param>
-        private void RaisePropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        // Create the OnPropertyChanged method to raise the event
+        // The calling member's name will be used as the parameter.
+        protected void OnPropertyChanged([CallerMemberName] string? name = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 }

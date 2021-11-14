@@ -1,11 +1,6 @@
-// -----------------------------------------------------------------------
-// <copyright company="Christoph van der Fecht - VDsoft">
-// This code can be used in commercial, free and open source projects.
-// </copyright>
-// -----------------------------------------------------------------------
-
 using System;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace TVDB.Model
 {
@@ -14,21 +9,6 @@ namespace TVDB.Model
     /// </summary>
     public class Language : INotifyPropertyChanged, Interfaces.IXmlSerializer//, IComparable<Language>
     {
-        /// <summary>
-        /// Name of the <see cref="Abbreviation"/> property.
-        /// </summary>
-        private const string AbbreviationName = "Abbreviation";
-
-        /// <summary>
-        /// Name of the <see cref="Id"/> property.
-        /// </summary>
-        private const string IdName = "Id";
-
-        /// <summary>
-        /// Name of the <see cref="Name"/> property.
-        /// </summary>
-        private const string NameName = "Name";
-
         /// <summary>
         /// The abbreviation of the language.
         /// </summary>
@@ -58,13 +38,13 @@ namespace TVDB.Model
 
             set
             {
-                if (value == _abbreviation)
+                if (string.Equals(value, _abbreviation, StringComparison.OrdinalIgnoreCase))
                 {
                     return;
                 }
 
                 _abbreviation = value;
-                RaisePropertyChanged(AbbreviationName);
+                OnPropertyChanged();
             }
         }
 
@@ -83,7 +63,7 @@ namespace TVDB.Model
                 }
 
                 _id = value;
-                RaisePropertyChanged(IdName);
+                OnPropertyChanged();
             }
         }
 
@@ -96,13 +76,13 @@ namespace TVDB.Model
 
             set
             {
-                if (value == _name)
+                if (string.Equals(value, _name, StringComparison.OrdinalIgnoreCase))
                 {
                     return;
                 }
 
                 _name = value;
-                RaisePropertyChanged(NameName);
+                OnPropertyChanged();
             }
         }
 
@@ -193,10 +173,8 @@ namespace TVDB.Model
             }
         }
 
-        /// <summary>
-        /// Raises the <see cref="PropertyChanged"/> event.
-        /// </summary>
-        /// <param name="propertyName">Name fo the property which changed its value.</param>
-        private void RaisePropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        // Create the OnPropertyChanged method to raise the event
+        // The calling member's name will be used as the parameter.
+        protected void OnPropertyChanged([CallerMemberName] string name = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 }

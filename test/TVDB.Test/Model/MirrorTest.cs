@@ -32,7 +32,7 @@ namespace TVDB.Test.Model
 
             var method = targetType.GetMethod("ConvertTypeMask", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
 
-            var typeMask = 0;
+            const int typeMask = 0;
             method?.Invoke(target, new object[] { typeMask });
 
             Assert.False(target.ContainsBannerFile);
@@ -48,7 +48,7 @@ namespace TVDB.Test.Model
 
             var method = targetType.GetMethod("ConvertTypeMask", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
 
-            var typeMask = 1;
+            const int typeMask = 1;
             method?.Invoke(target, new object[] { typeMask });
 
             Assert.False(target.ContainsBannerFile);
@@ -64,7 +64,7 @@ namespace TVDB.Test.Model
 
             var method = targetType.GetMethod("ConvertTypeMask", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
 
-            var typeMask = 2;
+            const int typeMask = 2;
             method?.Invoke(target, new object[] { typeMask });
 
             Assert.True(target.ContainsBannerFile);
@@ -80,7 +80,7 @@ namespace TVDB.Test.Model
 
             var method = targetType.GetMethod("ConvertTypeMask", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
 
-            var typeMask = 3;
+            const int typeMask = 3;
             method?.Invoke(target, new object[] { typeMask });
 
             Assert.True(target.ContainsBannerFile);
@@ -96,7 +96,7 @@ namespace TVDB.Test.Model
 
             var method = targetType.GetMethod("ConvertTypeMask", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
 
-            var typeMask = 4;
+            const int typeMask = 4;
             method?.Invoke(target, new object[] { typeMask });
 
             Assert.False(target.ContainsBannerFile);
@@ -112,7 +112,7 @@ namespace TVDB.Test.Model
 
             var method = targetType.GetMethod("ConvertTypeMask", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
 
-            var typeMask = 5;
+            const int typeMask = 5;
             method?.Invoke(target, new object[] { typeMask });
 
             Assert.False(target.ContainsBannerFile);
@@ -128,7 +128,7 @@ namespace TVDB.Test.Model
 
             var method = targetType.GetMethod("ConvertTypeMask", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
 
-            var typeMask = 6;
+            const int typeMask = 6;
             method?.Invoke(target, new object[] { typeMask });
 
             Assert.True(target.ContainsBannerFile);
@@ -144,7 +144,7 @@ namespace TVDB.Test.Model
 
             var method = targetType.GetMethod("ConvertTypeMask", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
 
-            var typeMask = 7;
+            const int typeMask = 7;
             method?.Invoke(target, new object[] { typeMask });
 
             Assert.True(target.ContainsBannerFile);
@@ -155,17 +155,6 @@ namespace TVDB.Test.Model
         #endregion ConvertTypeMaskTests
 
         #region Deserialize test
-
-        [Fact]
-        public void DeserializeTestSuccessfulNoNode()
-        {
-            var target = new Mirror();
-
-            var expected = new ArgumentNullException("node", "Provided node must not be null.");
-            var actual = Assert.Throws<ArgumentNullException>(() => target.Deserialize(null));
-
-            Assert.Equal(expected.Message, actual.Message);
-        }
 
         [Fact]
         public void DeserializeTestSuccessful()
@@ -181,14 +170,25 @@ namespace TVDB.Test.Model
             var target = new Mirror();
             target.Deserialize(mirrorNode);
 
-            var expectedID = 1;
-            var expectedAddress = "http://thetvdb.com";
+            const int expectedID = 1;
+            const string expectedAddress = "http://thetvdb.com";
 
             Assert.Equal(expectedID, target.Id);
             Assert.Equal(expectedAddress, target.Address);
             Assert.True(target.ContainsBannerFile);
             Assert.True(target.ContainsXmlFile);
             Assert.True(target.ContainsZipFile);
+        }
+
+        [Fact]
+        public void DeserializeTestSuccessfulNoNode()
+        {
+            var target = new Mirror();
+
+            var expected = new ArgumentNullException("node", "Provided node must not be null.");
+            var actual = Assert.Throws<ArgumentNullException>(() => target.Deserialize(null));
+
+            Assert.Equal(expected.Message, actual.Message);
         }
 
         #endregion Deserialize test

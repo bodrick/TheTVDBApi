@@ -1,9 +1,3 @@
-// -----------------------------------------------------------------------
-// <copyright company="Christoph van der Fecht - VDsoft">
-// This code can be used in commercial, free and open source projects.
-// </copyright>
-// -----------------------------------------------------------------------
-
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -15,36 +9,6 @@ namespace TVDB.Model
     /// </summary>
     public abstract class SeriesElement : INotifyPropertyChanged
     {
-        /// <summary>
-        /// Name of the <see cref="FirstAired"/> property.
-        /// </summary>
-        private const string FirstAiredName = "FirstAired";
-
-        /// <summary>
-        /// Name of the <see cref="Id"/> property.
-        /// </summary>
-        private const string IdName = "Id";
-
-        /// <summary>
-        /// Name of the <see cref="ImdbId"/> property.
-        /// </summary>
-        private const string ImdbIdName = "IMDBId";
-
-        /// <summary>
-        /// Name of the <see cref="Language"/> property.
-        /// </summary>
-        private const string LanguageName = "Language";
-
-        /// <summary>
-        /// Name of the <see cref="Name"/> property.
-        /// </summary>
-        private const string NameName = "Name";
-
-        /// <summary>
-        /// Name of the <see cref="Overview"/> property.
-        /// </summary>
-        private const string OverviewName = "Overview";
-
         /// <summary>
         /// Date the series was first aired.
         /// </summary>
@@ -95,7 +59,7 @@ namespace TVDB.Model
                 }
 
                 _firstAired = value;
-                RaisePropertyChanged(FirstAiredName);
+                OnPropertyChanged();
             }
         }
 
@@ -114,7 +78,7 @@ namespace TVDB.Model
                 }
 
                 _id = value;
-                RaisePropertyChanged(IdName);
+                OnPropertyChanged();
             }
         }
 
@@ -127,13 +91,13 @@ namespace TVDB.Model
 
             set
             {
-                if (value == _imdbId)
+                if (string.Equals(value, _imdbId, StringComparison.OrdinalIgnoreCase))
                 {
                     return;
                 }
 
                 _imdbId = value;
-                RaisePropertyChanged(ImdbIdName);
+                OnPropertyChanged();
             }
         }
 
@@ -146,13 +110,13 @@ namespace TVDB.Model
 
             set
             {
-                if (value == _language)
+                if (string.Equals(value, _language, StringComparison.OrdinalIgnoreCase))
                 {
                     return;
                 }
 
                 _language = value;
-                RaisePropertyChanged(LanguageName);
+                OnPropertyChanged();
             }
         }
 
@@ -165,13 +129,13 @@ namespace TVDB.Model
 
             set
             {
-                if (value == _name)
+                if (string.Equals(value, _name, StringComparison.OrdinalIgnoreCase))
                 {
                     return;
                 }
 
                 _name = value;
-                RaisePropertyChanged(NameName);
+                OnPropertyChanged();
             }
         }
 
@@ -184,13 +148,13 @@ namespace TVDB.Model
 
             set
             {
-                if (value == _overview)
+                if (string.Equals(value, _overview, StringComparison.OrdinalIgnoreCase))
                 {
                     return;
                 }
 
                 _overview = value;
-                RaisePropertyChanged(OverviewName);
+                OnPropertyChanged();
             }
         }
 
@@ -217,12 +181,12 @@ namespace TVDB.Model
                 return text;
             }
 
-            if (result.StartsWith(", "))
+            if (result.StartsWith(", ", StringComparison.OrdinalIgnoreCase))
             {
                 result = result.Remove(0, 1).Trim();
             }
 
-            if (result.EndsWith(","))
+            if (result.EndsWith(",", StringComparison.OrdinalIgnoreCase))
             {
                 result = result.Remove(result.LastIndexOf(",", StringComparison.OrdinalIgnoreCase), 1).Trim();
             }
@@ -230,10 +194,8 @@ namespace TVDB.Model
             return result;
         }
 
-        /// <summary>
-        /// Raises the <see cref="PropertyChanged"/> event.
-        /// </summary>
-        /// <param name="propertyName">Name of the property that changed its value.</param>
-        protected void RaisePropertyChanged([CallerMemberName] string propertyName = "") => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        // Create the OnPropertyChanged method to raise the event
+        // The calling member's name will be used as the parameter.
+        protected void OnPropertyChanged([CallerMemberName] string name = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 }

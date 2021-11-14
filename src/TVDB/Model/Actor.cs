@@ -1,11 +1,6 @@
-// -----------------------------------------------------------------------
-// <copyright company="Christoph van der Fecht - VDsoft">
-// This code can be used in commercial, free and open source projects.
-// </copyright>
-// -----------------------------------------------------------------------
-
 using System;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Xml;
 
 namespace TVDB.Model
@@ -16,31 +11,6 @@ namespace TVDB.Model
     public class Actor : INotifyPropertyChanged, Interfaces.IXmlSerializer, IComparable<Actor>
     {
         /// <summary>
-        /// Name of the <see cref="Id"/> property.
-        /// </summary>
-        private const string IdName = "Id";
-
-        /// <summary>
-        /// Name of the <see cref="ImagePath"/> property.
-        /// </summary>
-        private const string ImagePathName = "ImagePath";
-
-        /// <summary>
-        /// Name of the <see cref="Name"/> property.
-        /// </summary>
-        private const string NameName = "Name";
-
-        /// <summary>
-        /// Name of the <see cref="Role"/> property.
-        /// </summary>
-        private const string RoleName = "Role";
-
-        /// <summary>
-        /// Name of the <see cref="SortOrder"/> property.
-        /// </summary>
-        private const string SortOrderName = "SortOrder";
-
-        /// <summary>
         /// Id of the actor.
         /// </summary>
         private int _id;
@@ -48,17 +18,17 @@ namespace TVDB.Model
         /// <summary>
         /// Path of the actors image.
         /// </summary>
-        private string _imagePath;
+        private string? _imagePath;
 
         /// <summary>
         /// Real name of the actor.
         /// </summary>
-        private string _name;
+        private string? _name;
 
         /// <summary>
         /// Role the actor is playing.
         /// </summary>
-        private string _role;
+        private string? _role;
 
         /// <summary>
         /// Number the actors are sorted.
@@ -68,7 +38,7 @@ namespace TVDB.Model
         /// <summary>
         /// Occurs when a property changes its value.
         /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         /// <summary>
         /// Gets or sets the id of the actor.
@@ -85,64 +55,64 @@ namespace TVDB.Model
                 }
 
                 _id = value;
-                RaisePropertyChanged(IdName);
+                OnPropertyChanged();
             }
         }
 
         /// <summary>
         /// Gets or sets the path of the actors image.
         /// </summary>
-        public string ImagePath
+        public string? ImagePath
         {
             get => _imagePath;
 
             set
             {
-                if (value == _imagePath)
+                if (string.Equals(value, _imagePath, StringComparison.OrdinalIgnoreCase))
                 {
                     return;
                 }
 
                 _imagePath = value;
-                RaisePropertyChanged(ImagePathName);
+                OnPropertyChanged();
             }
         }
 
         /// <summary>
         /// Gets or sets the real name of the actor.
         /// </summary>
-        public string Name
+        public string? Name
         {
             get => _name;
 
             set
             {
-                if (value == _name)
+                if (string.Equals(value, _name, StringComparison.OrdinalIgnoreCase))
                 {
                     return;
                 }
 
                 _name = value;
-                RaisePropertyChanged(NameName);
+                OnPropertyChanged();
             }
         }
 
         /// <summary>
         /// Gets or sets the role the actor is playing.
         /// </summary>
-        public string Role
+        public string? Role
         {
             get => _role;
 
             set
             {
-                if (value == _role)
+                if (string.Equals(value, _role, StringComparison.OrdinalIgnoreCase))
                 {
                     return;
                 }
 
                 _role = value;
-                RaisePropertyChanged(RoleName);
+                OnPropertyChanged();
             }
         }
 
@@ -161,7 +131,7 @@ namespace TVDB.Model
                 }
 
                 _sortOrder = value;
-                RaisePropertyChanged(SortOrderName);
+                OnPropertyChanged();
             }
         }
 
@@ -170,8 +140,14 @@ namespace TVDB.Model
         /// </summary>
         /// <param name="other">Actor to compare.</param>
         /// <returns>Sort indicator.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
         public int CompareTo(Actor other)
         {
+            if (other == null)
+            {
+                throw new ArgumentNullException(nameof(other));
+            }
+
             if (other.SortOrder < SortOrder)
             {
                 return -1;
@@ -240,7 +216,7 @@ namespace TVDB.Model
 		/// }
 		/// </code>
 		/// </example>
-        public void Deserialize(XmlNode node)
+        public void Deserialize(XmlNode? node)
         {
             if (node == null)
             {
@@ -251,50 +227,31 @@ namespace TVDB.Model
             {
                 switch (currentNode.Name)
                 {
-                    case "id":
-                    {
-                        int.TryParse(currentNode.InnerText, out var result);
+                    case "id" when int.TryParse(currentNode.InnerText, out var result):
                         Id = result;
-                        continue;
-                    }
-                    case "Image":
-                    {
-                        if (!string.IsNullOrEmpty(currentNode.InnerText))
-                        {
-                            ImagePath = currentNode.InnerText;
-                        }
-                        continue;
-                    }
-                    case "Name":
-                    {
-                        if (!string.IsNullOrEmpty(currentNode.InnerText))
-                        {
-                            Name = currentNode.InnerText;
-                        }
-                        continue;
-                    }
-                    case "Role":
-                    {
-                        if (!string.IsNullOrEmpty(currentNode.InnerText))
-                        {
-                            Role = currentNode.InnerText;
-                        }
-                        continue;
-                    }
-                    case "SortOrder":
-                    {
-                        int.TryParse(currentNode.InnerText, out var result);
+                        break;
+
+                    case "Image" when !string.IsNullOrEmpty(currentNode.InnerText):
+                        ImagePath = currentNode.InnerText;
+                        break;
+
+                    case "Name" when !string.IsNullOrEmpty(currentNode.InnerText):
+                        Name = currentNode.InnerText;
+                        break;
+
+                    case "Role" when !string.IsNullOrEmpty(currentNode.InnerText):
+                        Role = currentNode.InnerText;
+                        break;
+
+                    case "SortOrder" when int.TryParse(currentNode.InnerText, out var result):
                         SortOrder = result;
-                        continue;
-                    }
+                        break;
                 }
             }
         }
 
-        /// <summary>
-        /// Raises the <see cref="PropertyChanged"/> event.
-        /// </summary>
-        /// <param name="propertyName">Name of the property that changed its value.</param>
-        private void RaisePropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        // Create the OnPropertyChanged method to raise the event
+        // The calling member's name will be used as the parameter.
+        protected void OnPropertyChanged([CallerMemberName] string? name = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 }

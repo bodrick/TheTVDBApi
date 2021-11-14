@@ -33,7 +33,7 @@ namespace TVDB.Test.Model
 
             Assert.Equal(605881, target.Id);
             Assert.Equal("fanart/original/83462-18.jpg", target.BannerPath);
-            Assert.Equal(BannerTyp.Fanart, target.Type);
+            Assert.Equal(BannerType.Fanart, target.Type);
             Assert.Equal("1920x1080", target.Dimension);
             Assert.Equal("|217,177,118|59,40,68|214,192,205|", target.Color);
             Assert.Equal("de", target.Language);
