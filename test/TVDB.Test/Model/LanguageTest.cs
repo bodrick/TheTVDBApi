@@ -42,6 +42,7 @@ namespace TVDB.Test.Model
             doc.LoadXml(xmlContent);
 
             var dataNode = doc.ChildNodes[1];
+            Assert.NotNull(dataNode);
             var languageNode = dataNode.ChildNodes[0];
 
             var target = new Language();

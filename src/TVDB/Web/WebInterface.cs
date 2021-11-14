@@ -18,12 +18,12 @@ namespace TVDB.Web
         /// <summary>
         /// Api key for the application.
         /// </summary>
-        private readonly string _apiKey;
+        private readonly string? _apiKey;
 
         /// <summary>
         /// WebClient to download the file.
         /// </summary>
-        private readonly WebClient _client = new();
+        private readonly WebClient _client = new WebClient();
 
         /// <summary>
         /// Default mirror site to connect to the api.
@@ -59,7 +59,7 @@ namespace TVDB.Web
         /// <summary>
         /// Directory for writing zip and extracted files
         /// </summary>
-        public string FileDirectory { get; set; }
+        public string? FileDirectory { get; set; }
 
         /// <summary>
         /// Path of the full series zip file.
@@ -466,7 +466,7 @@ namespace TVDB.Web
                 series.Add(deserialized);
             }
 
-            return series.Where(x => x.Language.Equals(languageAbbreviation, StringComparison.OrdinalIgnoreCase)).ToList();
+            return series.Where(x => x.Language?.Equals(languageAbbreviation, StringComparison.OrdinalIgnoreCase) == true).ToList();
         }
 
         /// <summary>

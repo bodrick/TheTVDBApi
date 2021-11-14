@@ -22,27 +22,27 @@ namespace TVDB.Model
         /// <summary>
         /// IMDB ID fo the series.
         /// </summary>
-        private string _imdbId;
+        private string? _imdbId;
 
         /// <summary>
         /// Language of the element.
         /// </summary>
-        private string _language;
+        private string? _language;
 
         /// <summary>
         /// Name of the element.
         /// </summary>
-        private string _name;
+        private string? _name;
 
         /// <summary>
         /// The overview of the series.
         /// </summary>
-        private string _overview;
+        private string? _overview;
 
         /// <summary>
         /// Occurs when a property changes its value.
         /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         /// <summary>
         /// Gets or sets the date the series was first aired.
@@ -85,7 +85,7 @@ namespace TVDB.Model
         /// <summary>
         /// Gets or sets the IMDB ID fo the series.
         /// </summary>
-        public string ImdbId
+        public string? ImdbId
         {
             get => _imdbId;
 
@@ -104,7 +104,7 @@ namespace TVDB.Model
         /// <summary>
         /// Gets or sets the language of the element.
         /// </summary>
-        public string Language
+        public string? Language
         {
             get => _language;
 
@@ -123,7 +123,7 @@ namespace TVDB.Model
         /// <summary>
         /// Gets or sets the name of the element.
         /// </summary>
-        public string Name
+        public string? Name
         {
             get => _name;
 
@@ -142,7 +142,7 @@ namespace TVDB.Model
         /// <summary>
         /// Gets or sets the overview of the series.
         /// </summary>
-        public string Overview
+        public string? Overview
         {
             get => _overview;
 
@@ -163,7 +163,7 @@ namespace TVDB.Model
         /// </summary>
         /// <param name="text">Text to prepare.</param>
         /// <returns>Clean text.</returns>
-        protected static string PrepareText(string text)
+        protected static string? PrepareText(string? text)
         {
             if (string.IsNullOrEmpty(text))
             {
@@ -171,6 +171,13 @@ namespace TVDB.Model
             }
 
             string result;
+
+#pragma warning disable CA1508 // Avoid dead conditional code
+            if (text == null)
+#pragma warning restore CA1508 // Avoid dead conditional code
+            {
+                return null;
+            }
 
             if (text.Contains("|"))
             {
@@ -196,6 +203,6 @@ namespace TVDB.Model
 
         // Create the OnPropertyChanged method to raise the event
         // The calling member's name will be used as the parameter.
-        protected void OnPropertyChanged([CallerMemberName] string name = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        protected void OnPropertyChanged([CallerMemberName] string? name = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 }

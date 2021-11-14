@@ -11,6 +11,6 @@ namespace TVDB.Interfaces
         /// Deserializes the provided XML node.
         /// </summary>
 		/// <param name="node">Node to deserialize.</param>
-        void Deserialize(XmlNode node);
+        void Deserialize(XmlNode? node);
     }
 }

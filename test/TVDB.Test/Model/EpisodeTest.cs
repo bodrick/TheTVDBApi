@@ -40,7 +40,7 @@ namespace TVDB.Test.Model
                 Writer = "Josh Schwartz|Chris Fedak"
             };
 
-            string expectedGuestStars = null;
+            const string? expectedGuestStars = null;
             const string expectedWriters = "Josh Schwartz, Chris Fedak";
 
             var targetType = typeof(Episode);
@@ -64,7 +64,7 @@ namespace TVDB.Test.Model
             };
 
             const string expectedGuestStars = "Mieko Hillman, Kristine Blackport, Jim Pirri, Diana Gitelman, Mel Fair, Lynn A. Henderson, Odessa Rae, Jordan Potter, Tasha Campbell, Dale Dye, Matthew Bomer, Bruno Amato, Nicolas Pajon, Wendy Makkena";
-            string expectedWriters = null;
+            const string? expectedWriters = null;
 
             var targetType = typeof(Episode);
             var method = targetType.GetMethod("Initialize", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
@@ -89,13 +89,14 @@ namespace TVDB.Test.Model
             doc.LoadXml(xmlContent);
 
             var dataNode = doc.ChildNodes[1];
+            Assert.NotNull(dataNode);
             var episodeNode = dataNode.ChildNodes[0];
             var target = new Episode();
             target.Deserialize(episodeNode);
 
-            string expectedGuestStars = null;
+            const string? expectedGuestStars = null;
             const string expectedOverview = "When Stewie sees a man who looks just like him on TV, he's convinced that he must be his real father. Stewie sets off on a cross-country road trip to find him, but his incredible journey leads to outrageous discoveries.";
-            string expectedWriter = null;
+            const string? expectedWriter = null;
 
             Assert.Equal(181165, target.Id);
             Assert.Equal(1.0, target.CombinedEpisodeNumber);
@@ -158,6 +159,7 @@ namespace TVDB.Test.Model
             doc.LoadXml(xmlContent);
 
             var dataNode = doc.ChildNodes[1];
+            Assert.NotNull(dataNode);
             var episodeNode = dataNode.ChildNodes[0];
             var target = new Episode();
             target.Deserialize(episodeNode);

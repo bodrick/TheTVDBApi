@@ -17,7 +17,7 @@ namespace TVDB.Test.Web
         /// <summary>
         /// Mirror for testing.
         /// </summary>
-        private readonly Mirror _testMirror = new Mirror
+        private readonly Mirror _testMirror = new()
         {
             Address = "http://thetvdb.com",
             ContainsBannerFile = true,
@@ -57,7 +57,7 @@ namespace TVDB.Test.Web
             var result = await target.GetLanguagesAsync();
 
             Assert.NotNull(result);
-            Assert.True(result.Count > 0);
+            Assert.True(result!.Count > 0);
         }
 
         [Fact]
@@ -67,7 +67,7 @@ namespace TVDB.Test.Web
             var result = await target.GetLanguagesAsync(_testMirror);
 
             Assert.NotNull(result);
-            Assert.True(result.Count > 0);
+            Assert.True(result!.Count > 0);
         }
 
         #endregion GetLanguagestests

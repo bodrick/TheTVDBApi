@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Xml;
 
 namespace TVDB.Model
 {
@@ -12,7 +13,7 @@ namespace TVDB.Model
         /// <summary>
         /// The abbreviation of the language.
         /// </summary>
-        private string _abbreviation;
+        private string? _abbreviation;
 
         /// <summary>
         /// Id of the language.
@@ -22,17 +23,17 @@ namespace TVDB.Model
         /// <summary>
         /// The name of the language.
         /// </summary>
-        private string _name;
+        private string? _name;
 
         /// <summary>
         /// Occurs when a property changed its value.
         /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         /// <summary>
         /// Gets or sets the abbreviation of the language.
         /// </summary>
-        public string Abbreviation
+        public string? Abbreviation
         {
             get => _abbreviation;
 
@@ -70,7 +71,7 @@ namespace TVDB.Model
         /// <summary>
         /// Gets or sets the name of the language.
         /// </summary>
-        public string Name
+        public string? Name
         {
             get => _name;
 
@@ -138,43 +139,34 @@ namespace TVDB.Model
         /// }
         /// </code>
         /// </example>
-        public void Deserialize(System.Xml.XmlNode node)
+        public void Deserialize(XmlNode? node)
         {
             if (node == null)
             {
                 throw new ArgumentNullException(nameof(node), "Provided node must not be null or empty");
             }
 
-            foreach (System.Xml.XmlNode currentNode in node.ChildNodes)
+            foreach (XmlNode currentNode in node.ChildNodes)
             {
-                if (currentNode.Name.Equals("name", StringComparison.OrdinalIgnoreCase))
+                switch (currentNode.Name)
                 {
-                    if (!string.IsNullOrEmpty(currentNode.InnerText))
-                    {
-                        Name = currentNode.InnerText;
-                    }
-                    continue;
-                }
+                    case "id" when int.TryParse(currentNode.InnerText, out var result):
+                        Id = result;
+                        break;
 
-                if (currentNode.Name.Equals("abbreviation", StringComparison.OrdinalIgnoreCase))
-                {
-                    if (!string.IsNullOrEmpty(currentNode.InnerText))
-                    {
+                    case "abbreviation" when !string.IsNullOrEmpty(currentNode.InnerText):
                         Abbreviation = currentNode.InnerText;
-                    }
-                    continue;
-                }
-                if (currentNode.Name.Equals("id", StringComparison.OrdinalIgnoreCase))
-                {
-                    int.TryParse(currentNode.InnerText, out var result);
-                    Id = result;
-                    continue;
+                        break;
+
+                    case "name" when !string.IsNullOrEmpty(currentNode.InnerText):
+                        Name = currentNode.InnerText;
+                        break;
                 }
             }
         }
 
         // Create the OnPropertyChanged method to raise the event
         // The calling member's name will be used as the parameter.
-        protected void OnPropertyChanged([CallerMemberName] string name = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        protected void OnPropertyChanged([CallerMemberName] string? name = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 }

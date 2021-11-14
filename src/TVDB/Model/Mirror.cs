@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using JetBrains.Annotations;
+using System.Xml;
 
 namespace TVDB.Model
 {
@@ -13,7 +13,7 @@ namespace TVDB.Model
         /// <summary>
         /// Address of the mirror.
         /// </summary>
-        private string _address;
+        private string? _address;
 
         /// <summary>
         /// Value indicating whether the mirror provides banner file.
@@ -38,12 +38,12 @@ namespace TVDB.Model
         /// <summary>
         /// Occurs when a property changed its value.
         /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         /// <summary>
         /// Gets or sets the address of the mirror.
         /// </summary>
-        public string Address
+        public string? Address
         {
             get => _address;
 
@@ -145,7 +145,7 @@ namespace TVDB.Model
         /// 1: Provided id is greater than this one.
         /// </returns>
         /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
-        public int CompareTo([NotNull] Mirror other)
+        public int CompareTo(Mirror other)
         {
             if (other == null)
             {
@@ -230,7 +230,7 @@ namespace TVDB.Model
 		/// }
 		/// </code>
 		/// </example>
-        public void Deserialize(System.Xml.XmlNode node)
+        public void Deserialize(XmlNode? node)
         {
             if (node == null)
             {
@@ -256,7 +256,7 @@ namespace TVDB.Model
 
         // Create the OnPropertyChanged method to raise the event
         // The calling member's name will be used as the parameter.
-        protected void OnPropertyChanged([CallerMemberName] string name = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        protected void OnPropertyChanged([CallerMemberName] string? name = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
         /// <summary>
         /// Converts the provided typeMask into the bool values.

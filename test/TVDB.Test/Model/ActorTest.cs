@@ -22,23 +22,22 @@ namespace TVDB.Test.Model
         {
             const string xmlContent = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?><Actors><Actor><id>79415</id><Image>actors/79415.jpg</Image><Name>Nathan Fillion</Name><Role>Richard Castle</Role><SortOrder>0</SortOrder></Actor></Actors>";
 
-            var doc = new XmlDocument { XmlResolver = null };
-            using (var sreader = new System.IO.StringReader(xmlContent))
-            using (var reader = XmlReader.Create(sreader, new XmlReaderSettings { XmlResolver = null }))
-            {
-                doc.Load(reader);
+            var doc = new XmlDocument();
+            using var sreader = new System.IO.StringReader(xmlContent);
+            using var reader = XmlReader.Create(sreader, new XmlReaderSettings { XmlResolver = null });
+            doc.Load(reader);
 
-                var actorsNode = doc.ChildNodes[1];
-                var actorNode = actorsNode.ChildNodes[0];
-                var target = new Actor();
-                target.Deserialize(actorNode);
+            var actorsNode = doc.ChildNodes[1];
+            Assert.NotNull(actorsNode);
+            var actorNode = actorsNode.ChildNodes[0];
+            var target = new Actor();
+            target.Deserialize(actorNode);
 
-                Assert.Equal(79415, target.Id);
-                Assert.Equal("actors/79415.jpg", target.ImagePath);
-                Assert.Equal("Nathan Fillion", target.Name);
-                Assert.Equal("Richard Castle", target.Role);
-                Assert.Equal(0, target.SortOrder);
-            }
+            Assert.Equal(79415, target.Id);
+            Assert.Equal("actors/79415.jpg", target.ImagePath);
+            Assert.Equal("Nathan Fillion", target.Name);
+            Assert.Equal("Richard Castle", target.Role);
+            Assert.Equal(0, target.SortOrder);
         }
     }
 }

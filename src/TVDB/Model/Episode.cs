@@ -41,7 +41,7 @@ namespace TVDB.Model
         /// <summary>
         /// The director fo the series.
         /// </summary>
-        private string _director;
+        private string? _director;
 
         /// <summary>
         /// Chapter number of the dvd.
@@ -71,7 +71,7 @@ namespace TVDB.Model
         /// <summary>
         /// Names of any guest stars that appeared in this episode.
         /// </summary>
-        private string _guestStars;
+        private string? _guestStars;
 
         /// <summary>
         /// Value indicating whether the episode is a tms export or not.
@@ -106,7 +106,7 @@ namespace TVDB.Model
         /// <summary>
         /// Path and name of the picture.
         /// </summary>
-        private string _pictureFilename;
+        private string? _pictureFilename;
 
         /// <summary>
         /// The production code of the episode.
@@ -176,7 +176,7 @@ namespace TVDB.Model
         /// <summary>
         /// Name of the writer of the episode.
         /// </summary>
-        private string _writer;
+        private string? _writer;
 
         /// <summary>
         /// Gets or sets the absolute number of the episode.
@@ -292,7 +292,7 @@ namespace TVDB.Model
         /// <summary>
         /// Gets or sets the director fo the series.
         /// </summary>
-        public string Director
+        public string? Director
         {
             get => _director;
 
@@ -406,7 +406,7 @@ namespace TVDB.Model
         /// <summary>
         /// Gets or sets the names of any guest stars that appeared in this episode.
         /// </summary>
-        public string GuestStars
+        public string? GuestStars
         {
             get => _guestStars;
 
@@ -539,7 +539,7 @@ namespace TVDB.Model
         /// <summary>
         /// Gets or sets the path and name of the picture.
         /// </summary>
-        public string PictureFilename
+        public string? PictureFilename
         {
             get => _pictureFilename;
 
@@ -805,7 +805,7 @@ namespace TVDB.Model
         /// <summary>
         /// Gets or sets the name of the writer of the episode.
         /// </summary>
-        public string Writer
+        public string? Writer
         {
             get => _writer;
 
@@ -882,7 +882,7 @@ namespace TVDB.Model
         /// }
         /// </code>
         /// </example>
-        public void Deserialize(XmlNode node)
+        public void Deserialize(XmlNode? node)
         {
             if (node == null)
             {

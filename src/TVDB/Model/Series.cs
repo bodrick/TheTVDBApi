@@ -12,7 +12,7 @@ namespace TVDB.Model
         /// <summary>
         /// All actors of the series.
         /// </summary>
-        private string _actors;
+        private string? _actors;
 
         /// <summary>
         /// Collection of the actors of the series.
@@ -32,22 +32,22 @@ namespace TVDB.Model
         /// <summary>
         /// Day the series is aired.
         /// </summary>
-        private string _airsDayOfWeek;
+        private string? _airsDayOfWeek;
 
         /// <summary>
         /// Time the series is aired.
         /// </summary>
-        private string _airsTime;
+        private string? _airsTime;
 
         /// <summary>
         /// Path of the banner for the series.
         /// </summary>
-        private string _bannerPath;
+        private string? _bannerPath;
 
         /// <summary>
         /// The content rating of the series.
         /// </summary>
-        private string _contentRating;
+        private string? _contentRating;
 
         /// <summary>
         /// Collection of all assigned episodes.
@@ -57,12 +57,12 @@ namespace TVDB.Model
         /// <summary>
         /// Path of the fan art.
         /// </summary>
-        private string _fanArt;
+        private string? _fanArt;
 
         /// <summary>
         /// The genre of the series.
         /// </summary>
-        private string _genre;
+        private string? _genre;
 
         /// <summary>
         /// Value indicating whether the series has episodes assigned or not.
@@ -77,7 +77,7 @@ namespace TVDB.Model
         /// <summary>
         /// The network name that airs the series.
         /// </summary>
-        private string _network;
+        private string? _network;
 
         /// <summary>
         /// Id of the network.
@@ -87,7 +87,7 @@ namespace TVDB.Model
         /// <summary>
         /// Path of the poster.
         /// </summary>
-        private string _poster;
+        private string? _poster;
 
         /// <summary>
         /// Rating fo the series.
@@ -112,7 +112,7 @@ namespace TVDB.Model
         /// <summary>
         /// Status of the series.
         /// </summary>
-        private string _status;
+        private string? _status;
 
         /// <summary>
         /// Value indicating whether the tms is wanted for the series or not.
@@ -122,7 +122,7 @@ namespace TVDB.Model
         /// <summary>
         /// Zap2It id of the series.
         /// </summary>
-        private string _zap2ItId;
+        private string? _zap2ItId;
 
         /// <summary>
         /// Gets or sets a collection of the actors of the series.
@@ -146,7 +146,7 @@ namespace TVDB.Model
         /// <summary>
         /// Gets or sets all actors of the series.
         /// </summary>
-        public string Actors
+        public string? Actors
         {
             get => _actors;
 
@@ -203,7 +203,7 @@ namespace TVDB.Model
         /// <summary>
         /// Gets or sets the day the series is aired.
         /// </summary>
-        public string AirsDayOfWeek
+        public string? AirsDayOfWeek
         {
             get => _airsDayOfWeek;
 
@@ -222,7 +222,7 @@ namespace TVDB.Model
         /// <summary>
         /// Gets or sets the time the series is aired.
         /// </summary>
-        public string AirsTime
+        public string? AirsTime
         {
             get => _airsTime;
 
@@ -241,7 +241,7 @@ namespace TVDB.Model
         /// <summary>
         /// Gets or sets the path of the banner for the series.
         /// </summary>
-        public string Banner
+        public string? Banner
         {
             get => _bannerPath;
 
@@ -260,7 +260,7 @@ namespace TVDB.Model
         /// <summary>
         /// Gets or sets the content rating of the series.
         /// </summary>
-        public string ContentRating
+        public string? ContentRating
         {
             get => _contentRating;
 
@@ -298,7 +298,7 @@ namespace TVDB.Model
         /// <summary>
         /// Gets or sets the path of the fan art.
         /// </summary>
-        public string FanArt
+        public string? FanArt
         {
             get => _fanArt;
 
@@ -317,7 +317,7 @@ namespace TVDB.Model
         /// <summary>
         /// Gets or sets the genre of the series.
         /// </summary>
-        public string Genre
+        public string? Genre
         {
             get => _genre;
 
@@ -374,7 +374,7 @@ namespace TVDB.Model
         /// <summary>
         /// Gets or sets the network name that airs the series.
         /// </summary>
-        public string Network
+        public string? Network
         {
             get => _network;
 
@@ -412,7 +412,7 @@ namespace TVDB.Model
         /// <summary>
         /// Gets or sets the path of the poster.
         /// </summary>
-        public string Poster
+        public string? Poster
         {
             get => _poster;
 
@@ -507,7 +507,7 @@ namespace TVDB.Model
         /// <summary>
         /// Gets or sets the status of the series.
         /// </summary>
-        public string Status
+        public string? Status
         {
             get => _status;
 
@@ -545,7 +545,7 @@ namespace TVDB.Model
         /// <summary>
         /// Gets or sets the Zap2It id of the series.
         /// </summary>
-        public string Zap2ItId
+        public string? Zap2ItId
         {
             get => _zap2ItId;
 
@@ -637,7 +637,7 @@ namespace TVDB.Model
         /// }
         /// </code>
         /// </example>
-        public void Deserialize(XmlNode node)
+        public void Deserialize(XmlNode? node)
         {
             if (node == null)
             {
@@ -648,11 +648,23 @@ namespace TVDB.Model
 
             foreach (XmlNode currentNode in node.ChildNodes)
             {
-                if (currentNode.Name.Equals("id", StringComparison.OrdinalIgnoreCase))
+                switch (currentNode.Name)
                 {
-                    int.TryParse(currentNode.InnerText, out var result);
-                    Id = result;
-                    continue;
+                    case "id" when int.TryParse(currentNode.InnerText, out var result):
+                        Id = result;
+                        break;
+
+                    case "Language" when !string.IsNullOrEmpty(currentNode.InnerText):
+                        Language = currentNode.InnerText;
+                        break;
+
+                    case "SeriesName" when !string.IsNullOrEmpty(currentNode.InnerText):
+                        Name = currentNode.InnerText;
+                        break;
+
+                    case "banner" when !string.IsNullOrEmpty(currentNode.InnerText):
+                        Banner = currentNode.InnerText;
+                        break;
                 }
 
                 if (currentNode.Name.Equals("SeriesID", StringComparison.OrdinalIgnoreCase))
@@ -666,30 +678,7 @@ namespace TVDB.Model
                     SeriesId = result;
                     continue;
                 }
-                if (currentNode.Name.Equals("Language", StringComparison.OrdinalIgnoreCase))
-                {
-                    if (!string.IsNullOrEmpty(currentNode.InnerText))
-                    {
-                        Language = currentNode.InnerText;
-                    }
-                    continue;
-                }
-                if (currentNode.Name.Equals("SeriesName", StringComparison.OrdinalIgnoreCase))
-                {
-                    if (!string.IsNullOrEmpty(currentNode.InnerText))
-                    {
-                        Name = currentNode.InnerText;
-                    }
-                    continue;
-                }
-                if (currentNode.Name.Equals("banner", StringComparison.OrdinalIgnoreCase))
-                {
-                    if (!string.IsNullOrEmpty(currentNode.InnerText))
-                    {
-                        Banner = currentNode.InnerText;
-                    }
-                    continue;
-                }
+
                 if (currentNode.Name.Equals("Overview", StringComparison.OrdinalIgnoreCase))
                 {
                     if (!string.IsNullOrEmpty(currentNode.InnerText))

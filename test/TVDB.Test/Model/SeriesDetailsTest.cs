@@ -58,7 +58,7 @@ namespace TVDB.Test.Model
             method?.Invoke(target, Array.Empty<object>());
 
             Assert.NotNull(target.Actors);
-            Assert.Equal(9, target.Actors.Count);
+            Assert.Equal(9, target.Actors!.Count);
         }
 
         [Fact]
@@ -71,7 +71,7 @@ namespace TVDB.Test.Model
             method?.Invoke(target, Array.Empty<object>());
 
             Assert.NotNull(target.Banners);
-            Assert.Equal(125, target.Banners.Count);
+            Assert.Equal(125, target.Banners!.Count);
         }
 
         [Fact]
@@ -84,7 +84,7 @@ namespace TVDB.Test.Model
             method?.Invoke(target, Array.Empty<object>());
 
             Assert.NotNull(target.Series);
-            Assert.Equal(83462, target.Series.Id);
+            Assert.Equal(83462, target.Series!.Id);
             Assert.Equal("Castle (2009)", target.Series.Name);
             Assert.Equal(121, target.Series.Episodes.Count);
         }

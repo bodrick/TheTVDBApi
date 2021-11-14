@@ -26,6 +26,7 @@ namespace TVDB.Test.Model
             doc.LoadXml(content);
 
             var bannersNode = doc.ChildNodes[1];
+            Assert.NotNull(bannersNode);
             var bannerNode = bannersNode.ChildNodes[0];
 
             var target = new Banner();
